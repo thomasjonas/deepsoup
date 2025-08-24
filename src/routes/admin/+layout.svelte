@@ -1,15 +1,8 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
-	import {
-		VideoCameraSolid,
-		CogSolid,
-		HomeOutline,
-		UsersSolid,
-		FileSolid,
-		ArrowRightToBracketOutline
-	} from 'flowbite-svelte-icons';
+	import { ArrowRightToBracketOutline, FileSolid, HomeSolid } from 'flowbite-svelte-icons';
 
 	let { data } = $props();
 	let activeUrl = $state(page.url.pathname);
@@ -17,11 +10,6 @@
 		activeUrl = page.url.pathname;
 	});
 	let user = $derived(data.user);
-
-	const activeClass =
-		'flex items-center p-2 text-base font-normal text-white bg-primary-600 dark:bg-primary-700 rounded-lg dark:text-white hover:bg-primary-800 dark:hover:bg-primary-800';
-	const nonActiveClass =
-		'flex items-center p-2 text-base font-normal text-green-900 rounded-lg dark:text-white hover:bg-green-100 dark:hover:bg-green-700';
 
 	async function handleLogout() {
 		try {
@@ -53,9 +41,9 @@
 				<h2 class="text-lg font-semibold text-gray-900">Admin Dashboard</h2>
 
 				<SidebarItem label="Overview" href="/admin" active={activeUrl === '/admin'}>
-					<svelte:fragment slot="icon">
-						<HomeOutline class="h-5 w-5" />
-					</svelte:fragment>
+					{#snippet icon()}
+						<HomeSolid class="h-5 w-5" />
+					{/snippet}
 				</SidebarItem>
 
 				<SidebarItem
@@ -63,9 +51,9 @@
 					href="/admin/content"
 					active={activeUrl.startsWith('/admin/content')}
 				>
-					<svelte:fragment slot="icon">
+					{#snippet icon()}
 						<FileSolid class="h-5 w-5" />
-					</svelte:fragment>
+					{/snippet}
 				</SidebarItem>
 			</SidebarGroup>
 
