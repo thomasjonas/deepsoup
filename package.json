@@ -18,6 +18,7 @@
 		"db:studio": "drizzle-kit studio"
 	},
 	"devDependencies": {
+		"@flowbite-svelte-plugins/datatable": "^0.4.0",
 		"@sveltejs/adapter-cloudflare": "^7.0.0",
 		"@sveltejs/kit": "^2.22.0",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
