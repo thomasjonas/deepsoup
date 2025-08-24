@@ -26,9 +26,7 @@ export async function analyzeVideoScreenshots(screenshots: string[]): Promise<Vi
 		const content: Array<any> = [
 			{
 				type: 'text',
-				text: `Analyze these video screenshots and provide:
-1. A compelling, concise title (max 60 characters)
-2. A detailed description (2-3 sentences) of what's happening in the video
+				text: `Analyze these video screenshots and provide a detailed description (2-3 sentences) of what's happening in the video.
 
 Focus on the main subject, actions, mood, and visual style. Be creative but accurate based on what you see in the screenshots.`
 			}
@@ -46,7 +44,7 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 		});
 
 		const response = await openai.chat.completions.create({
-			model: 'gpt-4-vision-preview',
+			model: 'gpt-4.1-mini',
 			messages: [
 				{
 					role: 'user',
@@ -57,61 +55,17 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 			temperature: 0.7
 		});
 
-		const analysis = response.choices[0]?.message?.content;
+		const description = response.choices[0]?.message?.content;
 
-		if (!analysis) {
+		if (!description) {
 			return {
 				success: false,
 				error: 'No analysis received from OpenAI'
 			};
 		}
 
-		// Extract title and description from the response
-		// Expected format: Title on first line, description follows
-		const lines = analysis.split('\n').filter((line) => line.trim());
-		let title = '';
-		let description = '';
-
-		// Look for title patterns
-		const titleLine = lines.find(
-			(line) =>
-				line.toLowerCase().includes('title:') ||
-				line.toLowerCase().startsWith('title') ||
-				lines.indexOf(line) === 0
-		);
-
-		if (titleLine) {
-			title = titleLine.replace(/title:\s*/i, '').trim();
-			// Remove quotes if present
-			title = title.replace(/^["']|["']$/g, '');
-			// Limit title length
-			if (title.length > 60) {
-				title = title.substring(0, 57) + '...';
-			}
-		}
-
-		// Get description (remaining content)
-		const descriptionLines = lines.filter(
-			(line) =>
-				!line.toLowerCase().includes('title:') && line !== titleLine && line.trim().length > 10 // Skip very short lines
-		);
-
-		description = descriptionLines.join(' ').trim();
-
-		// Fallback if parsing fails - use the whole response
-		if (!title && !description) {
-			const parts = analysis.split('\n\n');
-			title = parts[0]?.trim() || 'Untitled Video';
-			description = parts.slice(1).join(' ').trim() || analysis;
-		}
-
-		// Ensure we have at least basic content
-		if (!title) title = 'Video Upload';
-		if (!description) description = 'A video upload to the platform.';
-
 		return {
 			success: true,
-			title,
 			description
 		};
 	} catch (error) {

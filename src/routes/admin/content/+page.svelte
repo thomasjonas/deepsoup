@@ -71,7 +71,7 @@
 	{/if}
 
 	<!-- Colophon Content -->
-	<Card class="p-6">
+	<Card class="p-6" size="lg">
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
 				<div>
@@ -112,23 +112,11 @@
 					</Button>
 				</div>
 			</form>
-
-			<!-- Preview -->
-			<div class="border-t pt-4">
-				<h3 class="mb-2 text-sm font-medium text-gray-900">Preview:</h3>
-				<div class="rounded-md bg-gray-50 p-4 text-sm text-gray-700">
-					{#if colophonContent.trim()}
-						<div class="whitespace-pre-wrap">{colophonContent}</div>
-					{:else}
-						<span class="text-gray-500 italic">No content entered</span>
-					{/if}
-				</div>
-			</div>
 		</div>
 	</Card>
 
 	<!-- Screening Dates Content -->
-	<Card class="p-6">
+	<Card class="p-6" size="lg">
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
 				<div>
@@ -173,43 +161,6 @@
 					</Button>
 				</div>
 			</form>
-
-			<!-- Preview -->
-			<div class="border-t pt-4">
-				<h3 class="mb-2 text-sm font-medium text-gray-900">Preview:</h3>
-				<div class="rounded-md bg-gray-50 p-4 text-sm text-gray-700">
-					{#if screeningDatesContent.trim()}
-						<div class="whitespace-pre-wrap">{screeningDatesContent}</div>
-					{:else}
-						<span class="text-gray-500 italic">No content entered</span>
-					{/if}
-				</div>
-			</div>
-		</div>
-	</Card>
-
-	<!-- Usage Instructions -->
-	<Card class="p-6">
-		<div class="space-y-3">
-			<h2 class="text-lg font-medium text-gray-900">Usage Instructions</h2>
-
-			<div class="space-y-2 text-sm text-gray-600">
-				<p>
-					<strong>Colophon:</strong> This section typically contains credits, acknowledgments, production
-					information, or any other details about your video project. It's often displayed at the end
-					of films or on about pages.
-				</p>
-
-				<p>
-					<strong>Screening Dates:</strong> Use this section to inform visitors about upcoming screening
-					events, film festival dates, or any scheduled viewings of the submitted videos.
-				</p>
-
-				<p class="mt-4 text-xs text-gray-500">
-					<strong>Note:</strong> All content supports line breaks and basic formatting. Changes are saved
-					immediately when you click the save buttons.
-				</p>
-			</div>
 		</div>
 	</Card>
 </div>

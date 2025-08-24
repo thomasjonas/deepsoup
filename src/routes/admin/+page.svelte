@@ -43,29 +43,6 @@
 </svelte:head>
 
 <div class="space-y-6">
-	<!-- Page Header -->
-	<div class="flex items-center justify-between">
-		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-			<p class="mt-1 text-sm text-gray-600">Monitor video uploads and system status</p>
-		</div>
-		<div class="flex gap-4">
-			<a
-				href="/admin/videos"
-				class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-			>
-				Manage Videos
-			</a>
-			<a
-				href="/"
-				target="_blank"
-				class="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-			>
-				View Upload Page
-			</a>
-		</div>
-	</div>
-
 	<!-- Statistics Cards -->
 	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 		<Card class="p-6">
@@ -85,53 +62,10 @@
 				</div>
 			</div>
 		</Card>
-
-		<Card class="p-6">
-			<div class="flex items-center">
-				<div class="flex-1">
-					<h3 class="text-lg font-medium text-gray-900">Total Storage</h3>
-					<p class="mt-2 text-3xl font-bold text-green-600">{data.stats.totalSize} MB</p>
-				</div>
-				<div class="flex-shrink-0">
-					<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100">
-						<svg class="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								fill-rule="evenodd"
-								d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</div>
-				</div>
-			</div>
-		</Card>
-
-		<Card class="p-6">
-			<div class="flex items-center">
-				<div class="flex-1">
-					<h3 class="text-lg font-medium text-gray-900">System Status</h3>
-					<p class="mt-2 flex items-center text-lg font-semibold text-green-600">
-						<span class="mr-2 h-2 w-2 rounded-full bg-green-500"></span>
-						Operational
-					</p>
-				</div>
-				<div class="flex-shrink-0">
-					<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100">
-						<svg class="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								fill-rule="evenodd"
-								d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</div>
-				</div>
-			</div>
-		</Card>
 	</div>
 
 	<!-- Recent Videos Table -->
-	<Card class="p-6">
+	<div>
 		<div class="mb-4 flex items-center justify-between">
 			<h2 class="text-lg font-medium text-gray-900">Recent Uploads</h2>
 			<a href="/admin/videos" class="text-sm font-medium text-blue-600 hover:text-blue-500">
@@ -206,5 +140,5 @@
 				<p class="mt-1 text-sm text-gray-500">Videos uploaded by users will appear here.</p>
 			</div>
 		{/if}
-	</Card>
+	</div>
 </div>

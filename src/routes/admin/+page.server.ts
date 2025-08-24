@@ -22,19 +22,9 @@ export const load: PageServerLoad = async () => {
 			.orderBy(sql`${videos.uploadDate} DESC`)
 			.limit(10);
 
-		// Calculate total file size
-		const totalSizeResult = await db
-			.select({
-				totalSize: sql<number>`SUM(${videos.fileSize})`
-			})
-			.from(videos);
-
-		const totalSize = totalSizeResult[0]?.totalSize || 0;
-
 		return {
 			stats: {
-				totalVideos: totalVideos[0]?.count || 0,
-				totalSize: Math.round(totalSize / (1024 * 1024)) // Convert to MB
+				totalVideos: totalVideos[0]?.count || 0
 			},
 			recentVideos: recentVideos.map((video) => ({
 				...video,
