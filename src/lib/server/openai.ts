@@ -13,7 +13,10 @@ export interface VideoAnalysisResult {
 }
 
 // Analyze video screenshots using OpenAI Vision API
-export async function analyzeVideoScreenshots(screenshots: string[]): Promise<VideoAnalysisResult> {
+export async function analyzeVideoScreenshots(
+	prompt: string,
+	screenshots: string[]
+): Promise<VideoAnalysisResult> {
 	try {
 		if (!screenshots || screenshots.length === 0) {
 			return {
@@ -26,9 +29,7 @@ export async function analyzeVideoScreenshots(screenshots: string[]): Promise<Vi
 		const content: Array<any> = [
 			{
 				type: 'text',
-				text: `Analyze these video screenshots and provide a detailed description (2-3 sentences) of what's happening in the video.
-
-Focus on the main subject, actions, mood, and visual style. Be creative but accurate based on what you see in the screenshots.`
+				text: prompt
 			}
 		];
 

@@ -18,7 +18,13 @@
 	let formData = $state({
 		name: '',
 		email: '',
-		instagramHandle: ''
+		instagramHandle: '',
+		prompt: `Analyze these video screenshots and analyze what is happening. Describe 3 funny things that happened. Make sure every description is no longer than 5 words. 
+
+Use the following format:
+- [Funny thing 1]
+- [Funny thing 2]
+- [Funny thing 3]`
 	});
 
 	let uploadError = $state('');
@@ -103,8 +109,11 @@
 			const duration = videoPreview.duration;
 			const timestamps = [
 				duration * 0.1, // 10%
+				duration * 0.2, // 10%
 				duration * 0.3, // 30%
+				duration * 0.5, // 10%
 				duration * 0.6, // 60%
+				duration * 0.75, // 60%
 				duration * 0.9 // 90%
 			];
 
@@ -147,7 +156,10 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ screenshots })
+				body: JSON.stringify({
+					prompt: formData.prompt,
+					screenshots
+				})
 			});
 
 			if (response.ok) {
@@ -157,7 +169,11 @@
 					aiDescription = result.description || '';
 				} else {
 					console.error('AI analysis failed:', result.error);
+					alert(result.error);
 				}
+			} else {
+				const error = await response.json();
+				throw new Error(error.error);
 			}
 		} catch (error) {
 			console.error('Error calling AI analysis:', error);
@@ -192,36 +208,22 @@
 			uploadFormData.append('duration', videoPreview.duration.toString());
 			uploadFormData.append('fileSize', selectedFile.size.toString());
 
-			// Upload to server
-			const xhr = new XMLHttpRequest();
+			// Upload to server using Fetch API
+			const response = await fetch('/api/upload-video', {
+				method: 'POST',
+				body: uploadFormData
+			});
 
-			// Track upload progress
-			xhr.upload.onprogress = (event) => {
-				if (event.lengthComputable) {
-					uploadProgress = (event.loaded / event.total) * 100;
-				}
-			};
-
-			// Handle completion
-			xhr.onload = () => {
-				if (xhr.status === 200) {
-					uploadSuccess = true;
-					resetForm();
-				} else {
-					uploadError = 'Upload failed. Please try again.';
-				}
-				isUploading = false;
-			};
-
-			xhr.onerror = () => {
-				uploadError = 'Upload failed. Please check your connection.';
-				isUploading = false;
-			};
-
-			xhr.open('POST', '/api/upload-video');
-			xhr.send(uploadFormData);
+			if (response.ok) {
+				uploadSuccess = true;
+				resetForm();
+			} else {
+				const errorData = await response.json().catch(() => ({}));
+				uploadError = errorData.error || 'Upload failed. Please try again.';
+			}
 		} catch (error) {
-			uploadError = 'Upload failed. Please try again.';
+			uploadError = 'Upload failed. Please check your connection.';
+		} finally {
 			isUploading = false;
 		}
 	}
@@ -229,7 +231,14 @@
 	// Reset form after successful upload
 	function resetForm() {
 		selectedFile = null;
-		formData = { name: '', email: '', instagramHandle: '' };
+		formData = {
+			name: '',
+			email: '',
+			instagramHandle: '',
+			prompt: `Analyze these video screenshots and provide a detailed description (2-3 sentences) of what's happening in the video.
+
+Focus on the main subject, actions, mood, and visual style. Be creative but accurate based on what you see in the screenshots.`
+		};
 		aiTitle = '';
 		aiDescription = '';
 		screenshots = [];
@@ -247,10 +256,10 @@
 <div class="min-h-screen bg-gray-50 px-4 py-8">
 	<div class="mx-auto max-w-md">
 		<!-- Header -->
-		<div class="mb-8 text-center">
+		<!-- <div class="mb-8 text-center">
 			<h1 class="mb-2 text-3xl font-bold text-gray-900">Video Upload</h1>
 			<p class="text-gray-600">Share your video with us</p>
-		</div>
+		</div> -->
 
 		{#if uploadSuccess}
 			<!-- Success Message -->
@@ -291,6 +300,9 @@
 					ondrop={handleDrop}
 					ondragover={handleDragOver}
 					ondragleave={handleDragLeave}
+					role="button"
+					aria-label="Upload or drag and drop files"
+					tabindex="0"
 				>
 					{#if selectedFile}
 						<div class="space-y-4">
@@ -362,17 +374,23 @@
 				{#if aiTitle || aiDescription}
 					<div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
 						<h3 class="mb-2 text-sm font-medium text-gray-900">AI Analysis</h3>
-						{#if aiTitle}
-							<p class="mb-1 text-sm font-medium text-gray-700">Title: {aiTitle}</p>
-						{/if}
 						{#if aiDescription}
-							<p class="text-sm text-gray-600">{aiDescription}</p>
+							<pre class="text-sm text-gray-600">{aiDescription}</pre>
 						{/if}
 					</div>
 				{/if}
 
-				<!-- User Information Form -->
 				<div class="space-y-4">
+					<div>
+						<label for="prompt" class="mb-1 block text-sm font-medium text-gray-700">
+							Prompt *
+						</label>
+						<textarea id="prompt" class="h-96 w-full" bind:value={formData.prompt}></textarea>
+					</div>
+				</div>
+
+				<!-- User Information Form -->
+				<!-- <div class="space-y-4">
 					<div>
 						<label for="name" class="mb-1 block text-sm font-medium text-gray-700">
 							Full Name *
@@ -413,7 +431,7 @@
 							placeholder="@username"
 						/>
 					</div>
-				</div>
+				</div> -->
 
 				<!-- Error Message -->
 				{#if uploadError}
@@ -438,8 +456,21 @@
 					</div>
 				{/if}
 
-				<!-- Submit Button -->
 				<button
+					type="button"
+					onclick={extractScreenshots}
+					disabled={!selectedFile || isAnalyzing || !formData.prompt}
+					class="w-full rounded-md bg-blue-600 px-4 py-3 font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+				>
+					{#if isAnalyzing}
+						Analyzing Video...
+					{:else}
+						Analyze video
+					{/if}
+				</button>
+
+				<!-- Submit Button -->
+				<!-- <button
 					type="submit"
 					disabled={!selectedFile ||
 						isUploading ||
@@ -455,7 +486,7 @@
 					{:else}
 						Upload Video
 					{/if}
-				</button>
+				</button> -->
 			</form>
 		{/if}
 	</div>

@@ -4,7 +4,17 @@ import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const { screenshots } = await request.json();
+		const { prompt, screenshots } = await request.json();
+
+		if (!prompt) {
+			return json(
+				{
+					success: false,
+					error: 'No prompt provided'
+				},
+				{ status: 400 }
+			);
+		}
 
 		if (!screenshots || !Array.isArray(screenshots) || screenshots.length === 0) {
 			return json(
@@ -17,7 +27,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Analyze screenshots with OpenAI
-		const analysis = await analyzeVideoScreenshots(screenshots);
+		const analysis = await analyzeVideoScreenshots(prompt, screenshots);
 
 		if (analysis.success) {
 			return json({
