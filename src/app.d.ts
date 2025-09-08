@@ -1,6 +1,9 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 import type { Session, User } from '$lib/auth';
+import type { LibSQLDatabase } from 'drizzle-orm/libsql';
+import type { DrizzleD1Database } from 'drizzle-orm/d1';
+import type * as schema from '$lib/server/db/schema';
 
 declare global {
 	namespace App {
@@ -8,10 +11,15 @@ declare global {
 		interface Locals {
 			user?: Session['user'];
 			session?: Session['session'];
+			db: LibSQLDatabase<typeof schema> | DrizzleD1Database<typeof schema>;
 		}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			env: {
+				DB: D1Database;
+			};
+		}
 	}
 }
 
