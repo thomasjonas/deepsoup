@@ -1,4 +1,4 @@
-import { BUNNY_API_KEY, BUNNY_LIBRARY_ID } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export interface BunnyStreamVideo {
 	videoLibraryId: number;
@@ -33,10 +33,10 @@ const BUNNY_API_BASE = 'https://video.bunnycdn.com';
 // Create a new video entry in BunnyStream
 export async function createVideo(title: string): Promise<CreateVideoResponse> {
 	try {
-		const response = await fetch(`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos`, {
+		const response = await fetch(`${BUNNY_API_BASE}/library/${env.BUNNY_LIBRARY_ID}/videos`, {
 			method: 'POST',
 			headers: {
-				AccessKey: BUNNY_API_KEY,
+				AccessKey: env.BUNNY_API_KEY,
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
@@ -75,11 +75,11 @@ export async function uploadVideo(
 ): Promise<UploadResponse> {
 	try {
 		const response = await fetch(
-			`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
+			`${BUNNY_API_BASE}/library/${env.BUNNY_LIBRARY_ID}/videos/${videoId}`,
 			{
 				method: 'PUT',
 				headers: {
-					AccessKey: BUNNY_API_KEY,
+					AccessKey: env.BUNNY_API_KEY,
 					'Content-Type': 'application/octet-stream'
 				},
 				body: videoFile
@@ -95,8 +95,8 @@ export async function uploadVideo(
 		}
 
 		// Generate URLs for the uploaded video
-		const videoUrl = `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${videoId}`;
-		const embedUrl = `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${videoId}?autoplay=true&preload=true`;
+		const videoUrl = `https://iframe.mediadelivery.net/embed/${env.BUNNY_LIBRARY_ID}/${videoId}`;
+		const embedUrl = `https://iframe.mediadelivery.net/embed/${env.BUNNY_LIBRARY_ID}/${videoId}?autoplay=true&preload=true`;
 
 		return {
 			success: true,
@@ -116,10 +116,10 @@ export async function uploadVideo(
 export async function getVideoInfo(videoId: string): Promise<BunnyStreamVideo | null> {
 	try {
 		const response = await fetch(
-			`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
+			`${BUNNY_API_BASE}/library/${env.BUNNY_LIBRARY_ID}/videos/${videoId}`,
 			{
 				headers: {
-					AccessKey: BUNNY_API_KEY
+					AccessKey: env.BUNNY_API_KEY
 				}
 			}
 		);
@@ -139,9 +139,9 @@ export async function getVideoInfo(videoId: string): Promise<BunnyStreamVideo | 
 // Get all videos from BunnyStream library
 export async function listVideos(): Promise<BunnyStreamVideo[]> {
 	try {
-		const response = await fetch(`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos`, {
+		const response = await fetch(`${env.BUNNY_API_BASE}/library/${env.BUNNY_LIBRARY_ID}/videos`, {
 			headers: {
-				AccessKey: BUNNY_API_KEY
+				AccessKey: env.BUNNY_API_KEY
 			}
 		});
 
@@ -178,11 +178,11 @@ export async function getDownloadUrl(videoId: string): Promise<string | null> {
 export async function deleteVideo(videoId: string): Promise<boolean> {
 	try {
 		const response = await fetch(
-			`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
+			`${BUNNY_API_BASE}/library/${env.BUNNY_LIBRARY_ID}/videos/${videoId}`,
 			{
 				method: 'DELETE',
 				headers: {
-					AccessKey: BUNNY_API_KEY
+					AccessKey: env.BUNNY_API_KEY
 				}
 			}
 		);
