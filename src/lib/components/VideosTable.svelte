@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { PUBLIC_BUNNY_STORAGE_ZONE_NAME } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import { type getAllVideos } from '$lib/server/db/videos';
 	import { Table } from '@flowbite-svelte-plugins/datatable';
 	import { Button, Card, Datepicker, Modal } from 'flowbite-svelte';
@@ -77,7 +77,7 @@
 
 		const newData = filtered.map((video: Video) => [
 			video.id,
-			`https://${PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/${video.bunnyVideoId}/thumbnail.jpg`,
+			`https://${env.PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/${video.bunnyVideoId}/thumbnail.jpg`,
 			video.title || 'Untitled Video',
 			video.userName,
 			video.durationFormatted || '-',
@@ -141,7 +141,7 @@
 				<img
 					alt="preview thumbnail"
 					class="h-full w-full scale-105 object-cover blur-md"
-					src="https://{PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/{selectedVideo.bunnyVideoId}/thumbnail.jpg"
+					src="https://{env.PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/{selectedVideo.bunnyVideoId}/thumbnail.jpg"
 				/>
 			</div>
 			<iframe
