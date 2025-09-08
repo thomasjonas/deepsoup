@@ -1,18 +1,13 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { PUBLIC_BUNNY_STORAGE_ZONE_NAME } from '$env/static/public';
+	import { type getAllVideos } from '$lib/server/db/videos';
 	import { Table } from '@flowbite-svelte-plugins/datatable';
-	import { Button, Datepicker } from 'flowbite-svelte';
+	import { Button, Card, Datepicker, Modal } from 'flowbite-svelte';
 	import { PlusOutline } from 'flowbite-svelte-icons';
 	import type { DataTableOptions } from 'simple-datatables';
 
-	type Video = {
-		id: number;
-		title: string | null;
-		userName: string;
-		uploadDate: string | null;
-		status: string;
-		durationFormatted: string | null;
-		fileSizeMB: number;
-	};
+	type Video = Awaited<ReturnType<typeof getAllVideos>>[0];
 
 	let { videos } = $props<{ videos: Video[] }>();
 
@@ -22,9 +17,12 @@
 	});
 
 	let options: DataTableOptions = $state({
+		perPage: 25,
+		perPageSelect: false,
 		data: {
 			headings: [
 				'ID',
+				'Thumbnail',
 				'Video Title',
 				'Uploader',
 				'Duration',
@@ -37,18 +35,26 @@
 		},
 		columns: [
 			{ select: 0, hidden: true }, // id
-			{ select: 1, sortable: true }, // title
-			{ select: 2, sortable: true, type: 'string' }, // userName
-			{ select: 3, sortable: false }, // duration
-			{ select: 4, sortable: false }, // size
-			{ select: 5, sortable: false }, // status
-			{ select: 6, sortable: true, type: 'date', format: 'MM/DD/YYYY' }, // uploadDate
 			{
-				select: 7,
+				select: 1,
+				render: (data: any, cell: any, _dataIndex: number) => {
+					return `<img src="${data[0].data}" class="h-10 w-auto" />`;
+				}
+			}, // thumbnailUrl
+			{ select: 2 }, // title
+			{ select: 3, type: 'string' }, // userName
+			{ select: 4 }, // duration
+			{ select: 5 }, // size
+			{ select: 6 }, // status
+			// { select: 7, type: 'date', format: 'YYYY MM' }, // uploadDate
+			{ select: 7 }, // uploadDate
+
+			{
+				select: 8,
 				sortable: false,
-				cellRender: (data: any) => {
-					const videoId = data.cell.childNodes[0].data;
-					return `<a href="/admin/content/${videoId}" class="text-blue-500 hover:underline">Details</a>`;
+				render: (data: any, cell: any, _dataIndex: number) => {
+					const videoId = data[0].data;
+					return `<a href="#video-${videoId}" class="text-blue-500 hover:underline">Details</a>`;
 				}
 			}
 		]
@@ -71,32 +77,49 @@
 
 		const newData = filtered.map((video: Video) => [
 			video.id,
+			`https://${PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/${video.bunnyVideoId}/thumbnail.jpg`,
 			video.title || 'Untitled Video',
 			video.userName,
 			video.durationFormatted || '-',
 			`${video.fileSizeMB} MB`,
 			video.status,
-			video.uploadDate ? new Date(video.uploadDate).toLocaleDateString() : '-',
+			video.uploadDate,
 			video.id
 		]);
 
 		options.data.data = newData;
 	});
+
+	let showModal = $state(false);
+
+	let selectedVideo: Video | undefined = $derived.by(() => {
+		const hash = page.url.hash;
+		if (hash.startsWith('#video-')) {
+			const videoId = parseInt(hash.substring(7), 10);
+			if (!isNaN(videoId)) return videos.find((v: Video) => v.id === videoId);
+		}
+		return;
+	});
+
+	$effect(() => {
+		const hash = page.url.hash;
+		if (`#video-${selectedVideo?.id}` === hash) {
+			showModal = true;
+		}
+	});
+
+	$effect(() => {
+		if (!showModal && page.url.hash.startsWith('#video-')) window.location.hash = '';
+	});
 </script>
 
-<div class="rounded-lg bg-white p-4 dark:bg-gray-800">
+<Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
 	<div class="mb-4 flex items-center justify-between">
 		<div>
 			<h3 class="text-xl font-semibold text-gray-900 dark:text-white">Videos</h3>
 			<span class="text-base font-normal text-gray-500 dark:text-gray-400"
 				>Browse and manage your video content.</span
 			>
-		</div>
-		<div class="flex items-center space-x-3">
-			<Button href="/admin/content">
-				<PlusOutline class="mr-2 h-3.5 w-3.5" />
-				Upload Video
-			</Button>
 		</div>
 	</div>
 	<div class="mb-4 flex items-center justify-end space-x-4">
@@ -108,5 +131,36 @@
 		/>
 	</div>
 
-	<Table dataTableOptions={options} selectable={true} />
-</div>
+	<Table dataTableOptions={options} selectable={true} onSort={console.log} />
+</Card>
+
+{#if selectedVideo}
+	<Modal title={selectedVideo?.title || 'Video Details'} bind:open={showModal} size="lg">
+		<div style="position:relative;padding-top:56.25%;">
+			<div class="absolute inset-0 overflow-hidden">
+				<img
+					alt="preview thumbnail"
+					class="h-full w-full scale-105 object-cover blur-md"
+					src="https://{PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/{selectedVideo.bunnyVideoId}/thumbnail.jpg"
+				/>
+			</div>
+			<iframe
+				title={selectedVideo.title}
+				src={selectedVideo.bunnyStreamUrl}
+				style="border:0;position:absolute;top:0;height:100%;width:100%;"
+				allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
+				allowfullscreen
+			></iframe>
+		</div>
+		<div class="space-y-2">
+			<p><strong>Uploader:</strong> {selectedVideo.userName}</p>
+			<p><strong>Status:</strong> {selectedVideo.status}</p>
+			<p><strong>Duration:</strong> {selectedVideo.durationFormatted}</p>
+			<p><strong>Size:</strong> {selectedVideo.fileSizeMB} MB</p>
+			<p>
+				<strong>Uploaded:</strong>
+				{selectedVideo.uploadDate ? new Date(selectedVideo.uploadDate).toLocaleString() : '-'}
+			</p>
+		</div>
+	</Modal>
+{/if}

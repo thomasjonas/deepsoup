@@ -1,4 +1,4 @@
-import { BUNNY_API_KEY, BUNNY_LIBRARY_ID, BUNNY_STORAGE_ZONE_NAME } from '$env/static/private';
+import { BUNNY_API_KEY, BUNNY_LIBRARY_ID } from '$env/static/private';
 
 export interface BunnyStreamVideo {
 	videoLibraryId: number;
@@ -96,7 +96,7 @@ export async function uploadVideo(
 
 		// Generate URLs for the uploaded video
 		const videoUrl = `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${videoId}`;
-		const embedUrl = `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${videoId}?autoplay=false&preload=true`;
+		const embedUrl = `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${videoId}?autoplay=true&preload=true`;
 
 		return {
 			success: true,
