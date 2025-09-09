@@ -1,6 +1,10 @@
-// This file is no longer needed for database initialization.
-// The database client is now initialized in `src/hooks.server.ts`
-// and is available on `event.locals.db`.
+// import { drizzle } from 'drizzle-orm/libsql';
+// import { createClient } from '@libsql/client';
+// import * as schema from './schema';
+// import { env } from '$env/dynamic/private';
 
-// You can still export your schema from here if you wish.
-export * from './schema';
+// if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+
+// const client = createClient({ url: env.DATABASE_URL });
+
+// export const db = drizzle(client, { schema });

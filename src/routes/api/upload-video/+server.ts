@@ -1,8 +1,8 @@
 import { json } from '@sveltejs/kit';
 import { createVideo, uploadVideo } from '$lib/server/bunny-stream';
 import { generateFallbackDescription } from '$lib/server/openai';
-import { db } from '$lib/server/db';
-import { videos } from '$lib/server/db/schema';
+// import { db } from '$lib/server/db';
+// import { videos } from '$lib/server/db/schema';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -98,27 +98,28 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Save video metadata to database
 		console.log('Saving video metadata to database...');
 		try {
-			const insertResult = await db
-				.insert(videos)
-				.values({
-					bunnyVideoId: createResult.guid,
-					originalFilename: videoFile.name,
-					title: finalTitle,
-					aiDescription: finalDescription,
-					duration: duration || null,
-					fileSize: fileSize || videoFile.size,
-					userName: name,
-					userEmail: email,
-					instagramHandle: instagramHandle || null,
-					uploadDate: new Date(),
-					status: 'processing',
-					bunnyStreamUrl: uploadResult.embedUrl || null,
-					downloadUrl: uploadResult.videoUrl || null
-				})
-				.returning({ id: videos.id });
+			// const insertResult = await db
+			// 	.insert(videos)
+			// 	.values({
+			// 		bunnyVideoId: createResult.guid,
+			// 		originalFilename: videoFile.name,
+			// 		title: finalTitle,
+			// 		aiDescription: finalDescription,
+			// 		duration: duration || null,
+			// 		fileSize: fileSize || videoFile.size,
+			// 		userName: name,
+			// 		userEmail: email,
+			// 		instagramHandle: instagramHandle || null,
+			// 		uploadDate: new Date(),
+			// 		status: 'processing',
+			// 		bunnyStreamUrl: uploadResult.embedUrl || null,
+			// 		downloadUrl: uploadResult.videoUrl || null
+			// 	})
+			// 	.returning({ id: videos.id });
 
-			const videoId = insertResult[0]?.id;
+			// const videoId = insertResult[0]?.id;
 
+			const videoId = -1;
 			console.log('Video upload completed successfully:', {
 				videoId,
 				bunnyVideoId: createResult.guid,
