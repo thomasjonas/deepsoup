@@ -1,21 +1,21 @@
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+// import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { db } from './server/db/index';
-import * as schema from './server/db/schema';
+// import { db } from './server/db/index';
+// import * as schema from './server/db/schema';
 import { getRequestEvent } from '$app/server';
 
 export const auth = betterAuth({
 	plugins: [sveltekitCookies(getRequestEvent)], // make sure this is the last plugin in the array
-	database: drizzleAdapter(db, {
-		provider: 'sqlite',
-		schema: {
-			user: schema.user,
-			session: schema.session,
-			account: schema.account,
-			verification: schema.verification
-		}
-	}),
+	// database: drizzleAdapter(db, {
+	// 	provider: 'sqlite',
+	// 	schema: {
+	// 		user: schema.user,
+	// 		session: schema.session,
+	// 		account: schema.account,
+	// 		verification: schema.verification
+	// 	}
+	// }),
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: false

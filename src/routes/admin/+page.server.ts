@@ -1,9 +1,10 @@
-import { getAllVideos } from '$lib/server/db/videos';
+// import { getAllVideos } from '$lib/server/db/videos';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const videos = await getAllVideos();
+		// const videos = await getAllVideos();
+		const videos: any[] = [];
 
 		return {
 			stats: {

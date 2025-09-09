@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { env } from '$env/dynamic/public';
-	import { type getAllVideos } from '$lib/server/db/videos';
+	// import { type getAllVideos } from '$lib/server/db/videos';
 	import { Table } from '@flowbite-svelte-plugins/datatable';
 	import { Button, Card, Datepicker, Modal } from 'flowbite-svelte';
 	import { PlusOutline } from 'flowbite-svelte-icons';
 	import type { DataTableOptions } from 'simple-datatables';
 
-	type Video = Awaited<ReturnType<typeof getAllVideos>>[0];
+	// type Video = Awaited<ReturnType<typeof getAllVideos>>[0];
 
-	let { videos } = $props<{ videos: Video[] }>();
+	// let { videos } = $props<{ videos: Video[] }>();
+	type Video = any;
+	let videos: any[] = [];
 
 	let dateRange = $state({
 		from: undefined as Date | undefined,
