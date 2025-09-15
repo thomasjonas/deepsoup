@@ -24,6 +24,7 @@
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/vite": "^4.0.0",
+		"@types/matter-js": "^0.20.0",
 		"@types/node": "^22.17.2",
 		"drizzle-kit": "^0.30.2",
 		"prettier": "^3.4.2",
@@ -47,8 +48,11 @@
 		"flowbite-svelte": "^1.12.6",
 		"flowbite-svelte-icons": "^2.3.0",
 		"formdata-node": "^6.0.3",
+		"matter-js": "^0.20.0",
 		"nanoid": "^5.1.5",
 		"openai": "^5.15.0",
+		"pathseg": "^1.2.1",
+		"poly-decomp": "^0.3.0",
 		"uuid": "^11.1.0"
 	}
 }
