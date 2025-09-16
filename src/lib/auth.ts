@@ -4,6 +4,7 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { db } from '$lib/server/db/index';
 import * as schema from '$lib/server/db/schema';
 import { getRequestEvent } from '$app/server';
+import { BETTER_AUTH_SECRET } from '$env/static/private';
 
 export const auth = betterAuth({
 	plugins: [sveltekitCookies(getRequestEvent)], // make sure this is the last plugin in the array
@@ -16,6 +17,7 @@ export const auth = betterAuth({
 			verification: schema.verification
 		}
 	}),
+	secret: BETTER_AUTH_SECRET,
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: false
