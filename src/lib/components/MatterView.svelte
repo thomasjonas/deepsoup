@@ -76,7 +76,7 @@
 
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
-	let bodyScale = $derived(-20 + Math.sqrt(windowWidth / 390) * 170);
+	let bodyScale = $derived(-60 + Math.sqrt(windowWidth / 390) * 210);
 
 	let walls: Walls;
 	let box: Box;
@@ -117,41 +117,37 @@
 		Composite.add(world, walls.getBodies());
 
 		const letters = await loadLetters();
+		let deepWidth = 0;
+		let soupWidth = 0;
 		letters.forEach((letter, i) => {
 			const color = Common.choose(['#f19648', '#f5d259', '#f55a3c', '#063e7b', '#ececd1']);
-
-			const padding = 50;
-			const availableWidth = windowWidth - padding * 2;
-			const xStep = availableWidth / 3;
-			const subtractX = i < 4 ? 0 : xStep * 4;
-
-			const x = padding + i * xStep - subtractX;
-
-			const offset = 0.25;
-			const y = i > 3 ? windowHeight - windowHeight * offset : windowHeight * offset;
 			const body = Bodies.fromVertices(
-				100 + x,
-				y,
+				100 * i,
+				(i % 4) * 200,
 				letter,
 				{
 					render: {
 						fillStyle: color,
 						strokeStyle: color,
 						visible: DEBUG
-					}
+					},
+					mass: 99999
 				},
 				true
 			);
-
 			setBodySize(body, bodyScale);
-			Body.setPosition(body, { x, y });
+
+			const w = body.bounds.max.x - body.bounds.min.x;
+			if (i < 4) deepWidth += w;
+			if (i > 3) soupWidth += w;
 
 			const force = 0.02 + Math.random() * 0.0005;
 			const dir = Math.random() > 0.5 ? -2 : 2;
 			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
 			const bodyHeight = body.bounds.max.y - body.bounds.min.y;
 			const bodySize = Math.max(bodyWidth, bodyHeight);
-			const scale = (bodySize / 150) * Math.sqrt(windowWidth / 390) * 10;
+			console.log(bodySize);
+			const scale = (bodySize / 300) * Math.sqrt(windowWidth / 390) * 500000;
 
 			const forcePosition = Vector.add(
 				body.position,
@@ -170,11 +166,10 @@
 			body.frictionAir = 0.02;
 			Composite.add(world, body);
 
-			// Matter.Body.scale(body, 1.5, 1.5);
-
+			// Save the geometric center so we can easier align the svgs later
 			const geometricCenterX = (body.bounds.min.x + body.bounds.max.x) / 2;
 			const geometricCenterY = (body.bounds.min.y + body.bounds.max.y) / 2;
-			body.render.sprite = body.render.sprite || {}; // Ensure the sprite object exists
+			body.render.sprite = body.render.sprite || {};
 			body.render.sprite.xOffset = geometricCenterX - body.position.x;
 			body.render.sprite.yOffset = geometricCenterY - body.position.y;
 
@@ -182,6 +177,20 @@
 
 			svgs[i].style.height = `${bodyScale}px`;
 			svgs[i].style.opacity = '1';
+		});
+
+		// pick a good position for the DEEP and SOUP letters
+		let xPosition = Math.random() * (windowWidth - deepWidth);
+		letterBodies.forEach((body, i) => {
+			const offset = 0.25;
+			const y = i > 3 ? windowHeight - windowHeight * offset : windowHeight * offset;
+			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
+
+			if (xPosition < 0) xPosition = 0;
+			if (i !== 0 && i !== 4) xPosition += bodyWidth * 0.05;
+			Body.setPosition(body, { x: xPosition, y });
+			xPosition += bodyWidth;
+			if (i === 3) xPosition = Math.random() * (windowWidth - soupWidth);
 		});
 
 		box = new Box({
@@ -224,19 +233,20 @@
 	});
 
 	$effect(() => {
-		box?.update(
-			boxState.x + boxState.width / 2,
-			boxState.y + boxState.height / 2,
-			boxState.width,
-			boxState.height
-		);
+		if (boxState.width && boxState.x && boxState.height && boxState.y) {
+			box?.update(
+				boxState.x + boxState.width / 2,
+				boxState.y + boxState.height / 2,
+				boxState.width,
+				boxState.height
+			);
+		}
 	});
 
 	const WORD = 'DEEPSOUP';
 	let svgs: HTMLImageElement[] = $state([]);
 
 	$effect(() => {
-		console.log(appState.showLetters);
 		if (!appState.showLetters) {
 			const timings = shuffle(svgs.map((_, idx) => idx * 250 + Math.random() * 150));
 			svgs.forEach((svg, i) => {
