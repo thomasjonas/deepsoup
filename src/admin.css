@@ -20,6 +20,13 @@
 	--shadow: 0px 12px 33px 0px rgba(0, 0, 0, 0.06), 0px 3.618px 9.949px 0px rgba(0, 0, 0, 0.04);
 }
 
+.wysiwyg-container > div:last-child {
+	@apply bg-gray-50 text-gray-900 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400;
+}
+.tiptap.ProseMirror {
+	@apply bg-gray-50 text-gray-900 dark:bg-gray-600 dark:text-white;
+}
+
 .tiptap:first-child {
 	margin-top: 0;
 	min-height: 200px;

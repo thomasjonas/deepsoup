@@ -31,7 +31,7 @@
 	});
 </script>
 
-<TextEditor bind:editor content={value} {isEditable}>
+<TextEditor bind:editor content={value} {isEditable} class="wysiwyg-container">
 	<ToolbarRowWrapper>
 		<FormatButton {editor} format="link" />
 		<FormatButton {editor} format="removeLink" />
