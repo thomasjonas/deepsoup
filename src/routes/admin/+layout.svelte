@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
 	import { ArrowRightToBracketOutline, FileSolid, HomeSolid } from 'flowbite-svelte-icons';
+	import '../../admin.css';
 
 	let { data } = $props();
 	let activeUrl = $state(page.url.pathname);
@@ -38,7 +39,7 @@
 	<Sidebar {activeUrl} position="absolute" class="z-50 h-full" params={{ x: 0, duration: 0 }}>
 		<SidebarWrapper>
 			<SidebarGroup>
-				<h2 class="text-lg font-semibold text-gray-900">Admin Dashboard</h2>
+				<h2 class="font-semibold text-lg text-gray-900">Admin Dashboard</h2>
 
 				<SidebarItem label="Overview" href="/admin" active={activeUrl === '/admin'}>
 					{#snippet icon()}

@@ -1,8 +1,8 @@
+import { BUNNY_LIBRARY_ID } from '$env/static/private';
+import { getVideoInfo } from '$lib/server/bunny-stream';
+import { db } from '$lib/server/db';
+import { videos } from '$lib/server/db/schema';
 import { json } from '@sveltejs/kit';
-import { createVideo, uploadVideo } from '$lib/server/bunny-stream';
-import { generateFallbackDescription } from '$lib/server/openai';
-// import { db } from '$lib/server/db';
-// import { videos } from '$lib/server/db/schema';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -10,17 +10,19 @@ export const POST: RequestHandler = async ({ request }) => {
 		const formData = await request.formData();
 
 		// Extract form fields
-		const videoFile = formData.get('video') as File;
+		const videoId = formData.get('videoId') as string;
+		const videoFileName = formData.get('videoFileName') as string;
+		const videoFileSize = formData.get('videoFileSize') as string;
+		const videoDuration = formData.get('videoDuration') as string;
 		const name = formData.get('name') as string;
 		const email = formData.get('email') as string;
 		const instagramHandle = formData.get('instagramHandle') as string;
-		const aiTitle = formData.get('aiTitle') as string;
 		const aiDescription = formData.get('aiDescription') as string;
-		const duration = parseFloat(formData.get('duration') as string);
-		const fileSize = parseInt(formData.get('fileSize') as string);
+
+		const video = await getVideoInfo(videoId);
 
 		// Validate required fields
-		if (!videoFile || !name || !email) {
+		if (!video || !name || !email) {
 			return json(
 				{
 					success: false,
@@ -30,107 +32,43 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		// Validate file type
-		if (!videoFile.type.startsWith('video/')) {
-			return json(
-				{
-					success: false,
-					error: 'Invalid file type. Please upload a video file.'
-				},
-				{ status: 400 }
-			);
-		}
-
-		// Validate file size (300MB limit)
-		if (videoFile.size > 300 * 1024 * 1024) {
-			return json(
-				{
-					success: false,
-					error: 'File size too large. Maximum size is 300MB.'
-				},
-				{ status: 400 }
-			);
-		}
-
-		// Generate title and description fallbacks if AI analysis failed
-		let finalTitle = aiTitle;
-		let finalDescription = aiDescription;
-
-		if (!finalTitle || !finalDescription) {
-			const fallback = generateFallbackDescription(videoFile.name);
-			if (!finalTitle) finalTitle = fallback.title || 'Untitled Video';
-			if (!finalDescription) finalDescription = fallback.description || 'Video upload';
-		}
-
-		// Create video entry in BunnyStream
-		console.log('Creating video in BunnyStream...');
-		const createResult = await createVideo(finalTitle);
-
-		if (!createResult.success || !createResult.guid) {
-			console.error('Failed to create video in BunnyStream:', createResult.message);
-			return json(
-				{
-					success: false,
-					error: 'Failed to initialize video upload. Please try again.'
-				},
-				{ status: 500 }
-			);
-		}
-
-		// Convert file to buffer for upload
-		const videoBuffer = Buffer.from(await videoFile.arrayBuffer());
-
-		// Upload video file to BunnyStream
-		console.log('Uploading video file to BunnyStream...');
-		const uploadResult = await uploadVideo(createResult.guid, videoBuffer, videoFile.name);
-
-		if (!uploadResult.success) {
-			console.error('Failed to upload video to BunnyStream:', uploadResult.message);
-			return json(
-				{
-					success: false,
-					error: 'Failed to upload video. Please try again.'
-				},
-				{ status: 500 }
-			);
-		}
+		const videoUrl = `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${videoId}`;
+		const embedUrl = `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${videoId}?autoplay=true&preload=true`;
 
 		// Save video metadata to database
 		console.log('Saving video metadata to database...');
 		try {
-			// const insertResult = await db
-			// 	.insert(videos)
-			// 	.values({
-			// 		bunnyVideoId: createResult.guid,
-			// 		originalFilename: videoFile.name,
-			// 		title: finalTitle,
-			// 		aiDescription: finalDescription,
-			// 		duration: duration || null,
-			// 		fileSize: fileSize || videoFile.size,
-			// 		userName: name,
-			// 		userEmail: email,
-			// 		instagramHandle: instagramHandle || null,
-			// 		uploadDate: new Date(),
-			// 		status: 'processing',
-			// 		bunnyStreamUrl: uploadResult.embedUrl || null,
-			// 		downloadUrl: uploadResult.videoUrl || null
-			// 	})
-			// 	.returning({ id: videos.id });
+			const insertResult = await db
+				.insert(videos)
+				.values({
+					bunnyVideoId: video.guid,
+					originalFilename: videoFileName,
+					title: videoFileName,
+					aiDescription: aiDescription,
+					duration: videoDuration ? parseFloat(videoDuration) : null,
+					fileSize: videoFileSize ? parseInt(videoFileSize, 10) : null,
+					userName: name,
+					userEmail: email,
+					instagramHandle: instagramHandle || null,
+					uploadDate: new Date(),
+					bunnyStreamUrl: embedUrl || null,
+					downloadUrl: videoUrl || null
+				})
+				.returning({ id: videos.id });
 
-			// const videoId = insertResult[0]?.id;
+			const recordID = insertResult[0]?.id;
 
-			const videoId = -1;
-			console.log('Video upload completed successfully:', {
-				videoId,
-				bunnyVideoId: createResult.guid,
-				title: finalTitle
+			console.log('Video submission completed successfully:', {
+				recordID,
+				bunnyVideoId: video.guid,
+				title: videoFileName
 			});
 
 			return json({
 				success: true,
-				message: 'Video uploaded successfully',
-				videoId,
-				bunnyVideoId: createResult.guid
+				message: 'Video submitted successfully',
+				recordID,
+				bunnyVideoId: video.guid
 			});
 		} catch (dbError) {
 			console.error('Database error while saving video:', dbError);

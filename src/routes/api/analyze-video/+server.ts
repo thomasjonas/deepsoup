@@ -1,10 +1,15 @@
+import { eq } from 'drizzle-orm';
 import { json } from '@sveltejs/kit';
 import { analyzeVideoScreenshots, generateFallbackDescription } from '$lib/server/openai';
 import type { RequestHandler } from './$types';
+import { db } from '$lib/server/db';
+import { siteContent } from '$lib/server/db/schema';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const { prompt, screenshots } = await request.json();
+		const { screenshots } = await request.json();
+		const prompts = await db.select().from(siteContent).where(eq(siteContent.key, 'prompt'));
+		const prompt = prompts.pop();
 
 		if (!prompt) {
 			return json(
@@ -27,7 +32,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Analyze screenshots with OpenAI
-		const analysis = await analyzeVideoScreenshots(prompt, screenshots);
+		const analysis = await analyzeVideoScreenshots(prompt.content, screenshots);
 
 		if (analysis.success) {
 			return json({

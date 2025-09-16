@@ -38,6 +38,10 @@ export const load: PageServerLoad = async () => {
 					contentMap.screening_dates?.content ||
 					'Screening dates will be announced soon. Please check back regularly for updates.',
 				updatedAt: contentMap.screening_dates?.updatedAt || null
+			},
+			prompt: {
+				content: contentMap.prompt?.content || 'Prompt goes here',
+				updatedAt: contentMap.prompt?.updatedAt || null
 			}
 		};
 
@@ -57,6 +61,10 @@ export const load: PageServerLoad = async () => {
 					content:
 						'Screening dates will be announced soon. Please check back regularly for updates.',
 					updatedAt: null
+				},
+				prompt: {
+					content: 'Prompt goes here',
+					updatedAt: null
 				}
 			}
 		};
@@ -75,7 +83,7 @@ export const actions: Actions = {
 			}
 
 			// Validate key
-			if (!['colophon', 'screening_dates'].includes(key)) {
+			if (!['colophon', 'screening_dates', 'prompt'].includes(key)) {
 				return fail(400, { error: 'Invalid content key' });
 			}
 
@@ -104,7 +112,8 @@ export const actions: Actions = {
 
 			return {
 				success: true,
-				message: 'Content updated successfully'
+				message: 'Content updated successfully',
+				content: content.trim()
 			};
 		} catch (error) {
 			console.error('Error updating content:', error);
