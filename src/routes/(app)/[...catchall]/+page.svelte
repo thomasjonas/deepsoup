@@ -68,9 +68,9 @@
 <div class=" pointer-events-none absolute z-50 min-h-screen w-screen">
 	<div
 		class={[
-			`ui-text absolute rounded-3xl border-2 border-dashed border-black text-center leading-tight ${boxClasses}`,
+			`ui-text absolute rounded-3xl  text-center leading-tight ${boxClasses}`,
 			{
-				'border-dashed': !isDraggedOver,
+				'dashed-box': !isDraggedOver,
 				'bg-black text-white': isDraggedOver
 			}
 		]}
