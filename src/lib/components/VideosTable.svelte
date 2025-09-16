@@ -1,17 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { env } from '$env/dynamic/public';
-	// import { type getAllVideos } from '$lib/server/db/videos';
+	import { type getAllVideos } from '$lib/server/db/videos';
 	import { Table } from '@flowbite-svelte-plugins/datatable';
 	import { Button, Card, Datepicker, Modal } from 'flowbite-svelte';
 	import { PlusOutline } from 'flowbite-svelte-icons';
 	import type { DataTableOptions } from 'simple-datatables';
 
-	// type Video = Awaited<ReturnType<typeof getAllVideos>>[0];
+	type Video = Awaited<ReturnType<typeof getAllVideos>>[0];
 
-	// let { videos } = $props<{ videos: Video[] }>();
-	type Video = any;
-	let videos: any[] = [];
+	let { videos } = $props<{ videos: Video[] }>();
 
 	let dateRange = $state({
 		from: undefined as Date | undefined,
@@ -118,8 +116,8 @@
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
 	<div class="mb-4 flex items-center justify-between">
 		<div>
-			<h3 class="text-xl font-semibold text-gray-900 dark:text-white">Videos</h3>
-			<span class="text-base font-normal text-gray-500 dark:text-gray-400"
+			<h3 class="font-semibold text-xl text-gray-900 dark:text-white">Videos</h3>
+			<span class="font-normal text-base text-gray-500 dark:text-gray-400"
 				>Browse and manage your video content.</span
 			>
 		</div>

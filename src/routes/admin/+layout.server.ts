@@ -7,7 +7,6 @@ export const load: LayoutServerLoad = async ({ request, url }) => {
 	const session = await auth.api.getSession({
 		headers: request.headers
 	});
-	console.log({ session });
 
 	// If no valid session, redirect to login
 	if (!session?.session) {

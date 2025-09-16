@@ -1,4 +1,4 @@
-// import { db } from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { siteContent } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail } from '@sveltejs/kit';
@@ -7,13 +7,7 @@ import type { PageServerLoad, Actions } from './$types';
 export const load: PageServerLoad = async () => {
 	try {
 		// Get existing content
-		// const existingContent = await db.select().from(siteContent);
-		const existingContent: {
-			id: number;
-			key: string;
-			content: string;
-			updatedAt: Date;
-		}[] = [];
+		const existingContent = await db.select().from(siteContent);
 
 		// Convert to a more usable format
 		const contentMap: Record<string, { content: string; updatedAt: string | null }> = {};

@@ -3,7 +3,6 @@
 	import { page } from '$app/state';
 	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
 	import { ArrowRightToBracketOutline, FileSolid, HomeSolid } from 'flowbite-svelte-icons';
-	import '../../admin.css';
 
 	let { data } = $props();
 	let activeUrl = $state(page.url.pathname);
