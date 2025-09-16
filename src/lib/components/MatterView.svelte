@@ -5,6 +5,11 @@
 	import 'pathseg';
 	import { loadLetters } from '$lib/matter/utils';
 	import { Walls } from '$lib/matter/Walls';
+	import { Box } from '$lib/matter/Box';
+	import { appState, boxState } from '$lib/state.svelte';
+	import { shuffle } from 'lodash-es';
+
+	const DEBUG = false;
 
 	let canvasContainer: HTMLDivElement;
 
@@ -71,9 +76,10 @@
 
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
-	let bodyScale = $derived(-50 + Math.sqrt(windowWidth / 390) * 170);
+	let bodyScale = $derived(-20 + Math.sqrt(windowWidth / 390) * 170);
 
 	let walls: Walls;
+	let box: Box;
 
 	$effect(() => {
 		const newScale = bodyScale;
@@ -91,7 +97,7 @@
 				width: windowWidth,
 				height: windowHeight,
 				background: 'transparent', // white background
-				wireframes: false,
+				wireframes: DEBUG,
 				showPositions: true
 			}
 		});
@@ -121,7 +127,8 @@
 
 			const x = padding + i * xStep - subtractX;
 
-			const y = i > 3 ? windowHeight - windowHeight * 0.15 : windowHeight * 0.15;
+			const offset = 0.25;
+			const y = i > 3 ? windowHeight - windowHeight * offset : windowHeight * offset;
 			const body = Bodies.fromVertices(
 				100 + x,
 				y,
@@ -130,7 +137,7 @@
 					render: {
 						fillStyle: color,
 						strokeStyle: color,
-						lineWidth: 1
+						visible: DEBUG
 					}
 				},
 				true
@@ -140,11 +147,11 @@
 			Body.setPosition(body, { x, y });
 
 			const force = 0.02 + Math.random() * 0.0005;
-			const dir = Math.random() > 0.5 ? -1 : 1;
+			const dir = Math.random() > 0.5 ? -2 : 2;
 			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
 			const bodyHeight = body.bounds.max.y - body.bounds.min.y;
 			const bodySize = Math.max(bodyWidth, bodyHeight);
-			const scale = (bodySize / 150) * Math.sqrt(windowWidth / 390) * 1.5;
+			const scale = (bodySize / 150) * Math.sqrt(windowWidth / 390) * 10;
 
 			const forcePosition = Vector.add(
 				body.position,
@@ -153,11 +160,13 @@
 					-bodySize / 2 + Math.random() * bodySize
 				)
 			);
-			// Matter.Body.applyForce(
-			// 	body,
-			// 	forcePosition,
-			// 	Matter.Vector.create(force * dir * scale, force * dir * scale)
-			// );
+
+			Matter.Body.applyForce(
+				body,
+				forcePosition,
+				Matter.Vector.create(force * dir * scale, force * dir * scale)
+			);
+
 			body.frictionAir = 0.02;
 			Composite.add(world, body);
 
@@ -172,6 +181,15 @@
 			letterBodies.push(body);
 
 			svgs[i].style.height = `${bodyScale}px`;
+			svgs[i].style.opacity = '1';
+		});
+
+		box = new Box({
+			world,
+			x: boxState.x + boxState.width / 2,
+			y: boxState.y + boxState.height / 2,
+			width: boxState.width,
+			height: boxState.height
 		});
 
 		// add mouse control
@@ -205,20 +223,39 @@
 		walls.setSize(windowWidth, windowHeight);
 	});
 
+	$effect(() => {
+		box?.update(
+			boxState.x + boxState.width / 2,
+			boxState.y + boxState.height / 2,
+			boxState.width,
+			boxState.height
+		);
+	});
+
 	const WORD = 'DEEPSOUP';
-	let svgs: HTMLImageElement[] = [];
+	let svgs: HTMLImageElement[] = $state([]);
+
+	$effect(() => {
+		console.log(appState.showLetters);
+		if (!appState.showLetters) {
+			const timings = shuffle(svgs.map((_, idx) => idx * 250 + Math.random() * 150));
+			svgs.forEach((svg, i) => {
+				svg.style.transition = 'opacity 1000ms';
+				setTimeout(() => {
+					svg.style.opacity = '0';
+				}, timings[i]);
+			});
+		}
+	});
 </script>
 
 <svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
 
-<div
-	class="fixed top-0 left-0 h-full w-screen overflow-hidden bg-red-400"
-	bind:this={canvasContainer}
->
+<div class="fixed top-0 left-0 z-0 h-full w-screen overflow-hidden" bind:this={canvasContainer}>
 	{#each WORD as c, i}
 		<img
 			alt={`Letter shape ${WORD[i]}`}
-			class="pointer-events-none absolute z-10"
+			class="pointer-events-none absolute z-10 opacity-0"
 			bind:this={svgs[i]}
 			src="/svgs/{c}.svg"
 		/>

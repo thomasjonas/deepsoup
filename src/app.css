@@ -12,6 +12,14 @@
 
 @plugin 'flowbite/plugin';
 
+@font-face {
+	font-family: Univers;
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('/fonts/UniversRegular.woff2') format('woff2');
+}
+
 @theme {
 	--z-index-100: 100;
 
@@ -36,6 +44,11 @@
 	--color-secondary-700: #0369a1;
 	--color-secondary-800: #075985;
 	--color-secondary-900: #0c4a6e;
+	--color-green-*: initial;
+	--color-green: hsla(120, 100%, 63%, 1);
+
+	--font-weight-*: initial;
+	--font-sans: 'Univers', sans-serif;
 }
 
 @layer base {
@@ -57,4 +70,41 @@
 
 .datatable-wrapper .datatable-table tbody tr.selected {
 	background-color: #fff1ee !important;
+}
+
+.ui-text {
+	@apply text-[25px] lg:text-[48px];
+}
+
+.body-text {
+	@apply text-[20px] lg:text-[28px];
+}
+
+body {
+	@apply bg-green antialiased;
+}
+
+.info-content > * {
+	@apply rounded-2xl border-2 border-dotted p-2;
+}
+
+.info-content > * + * {
+	@apply mt-4;
+}
+
+.input-container {
+	@apply my-4 flex items-center gap-4;
+}
+
+.input-container input {
+	@apply min-w-0 rounded-full border-3 border-dotted border-black bg-transparent px-5 pb-5 focus:ring-0 lg:pt-4 lg:text-[24px];
+}
+
+.ai-description {
+	-webkit-text-stroke: 0.5px black;
+}
+@media (width >= 64rem) {
+	.ai-description {
+		-webkit-text-stroke: 1.5px black;
+	}
 }

@@ -182,6 +182,7 @@ Use the following format:
 
 	// Handle form submission
 	async function handleSubmit() {
+		console.log('---');
 		if (!selectedFile || !formData.name || !formData.email) {
 			uploadError = 'Please fill in all required fields and select a video';
 			return;
@@ -197,6 +198,7 @@ Use the following format:
 		uploadError = '';
 
 		try {
+			console.log('---');
 			// Create form data for upload
 			const uploadFormData = new FormData();
 			uploadFormData.append('video', selectedFile);
@@ -207,6 +209,8 @@ Use the following format:
 			uploadFormData.append('aiDescription', aiDescription);
 			uploadFormData.append('duration', videoPreview.duration.toString());
 			uploadFormData.append('fileSize', selectedFile.size.toString());
+
+			console.log(uploadFormData);
 
 			// Upload to server using Fetch API
 			const response = await fetch('/api/upload-video', {
@@ -222,6 +226,7 @@ Use the following format:
 				uploadError = errorData.error || 'Upload failed. Please try again.';
 			}
 		} catch (error) {
+			console.error(error);
 			uploadError = 'Upload failed. Please check your connection.';
 		} finally {
 			isUploading = false;
@@ -263,10 +268,10 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 
 		{#if uploadSuccess}
 			<!-- Success Message -->
-			<div class="mb-6 rounded-lg border border-green-200 bg-green-50 p-6">
+			<div class="border-green-200 bg-green-50 mb-6 rounded-lg border p-6">
 				<div class="flex items-center">
 					<div class="flex-shrink-0">
-						<svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+						<svg class="text-green-400 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
 							<path
 								fill-rule="evenodd"
 								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -275,14 +280,14 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 						</svg>
 					</div>
 					<div class="ml-3">
-						<h3 class="text-sm font-medium text-green-800">Upload Successful!</h3>
-						<div class="mt-2 text-sm text-green-700">
+						<h3 class="font-medium text-green-800 text-sm">Upload Successful!</h3>
+						<div class="text-green-700 mt-2 text-sm">
 							<p>Your video has been uploaded successfully. Thank you for your submission!</p>
 						</div>
 						<div class="mt-4">
 							<button
 								onclick={resetSuccess}
-								class="rounded bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-200"
+								class="bg-green-100 font-medium text-green-800 hover:bg-green-200 rounded px-4 py-2 text-sm"
 							>
 								Upload Another Video
 							</button>
@@ -315,7 +320,7 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 							<button
 								type="button"
 								onclick={() => fileInput.click()}
-								class="text-sm font-medium text-blue-600 hover:text-blue-700"
+								class="font-medium text-sm text-blue-600 hover:text-blue-700"
 							>
 								Choose Different File
 							</button>
@@ -373,7 +378,7 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 				<!-- AI Generated Description -->
 				{#if aiTitle || aiDescription}
 					<div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-						<h3 class="mb-2 text-sm font-medium text-gray-900">AI Analysis</h3>
+						<h3 class="font-medium mb-2 text-sm text-gray-900">AI Analysis</h3>
 						{#if aiDescription}
 							<pre class="text-sm text-gray-600">{aiDescription}</pre>
 						{/if}
@@ -382,7 +387,7 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 
 				<div class="space-y-4">
 					<div>
-						<label for="prompt" class="mb-1 block text-sm font-medium text-gray-700">
+						<label for="prompt" class="font-medium mb-1 block text-sm text-gray-700">
 							Prompt *
 						</label>
 						<textarea id="prompt" class="h-96 w-full" bind:value={formData.prompt}></textarea>
@@ -460,7 +465,7 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 					type="button"
 					onclick={extractScreenshots}
 					disabled={!selectedFile || isAnalyzing || !formData.prompt}
-					class="w-full rounded-md bg-blue-600 px-4 py-3 font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+					class="font-medium w-full rounded-md bg-blue-600 px-4 py-3 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 				>
 					{#if isAnalyzing}
 						Analyzing Video...

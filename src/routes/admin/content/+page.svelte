@@ -3,12 +3,14 @@
 	import { enhance } from '$app/forms';
 	import { formatDistanceToNow } from 'date-fns';
 	import type { PageData, ActionData } from './$types';
+	import Wysiwyg from '$lib/components/Wysiwyg.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	// Form states
-	let colophonContent = $state(data.content.colophon.content);
-	let screeningDatesContent = $state(data.content.screening_dates.content);
+	let colophonContent = $state(data.content?.colophon.content);
+	let screeningDatesContent = $state(data.content?.screening_dates.content);
+	let promptContent = $state(data.content?.prompt.content);
 	let isSubmitting = $state(false);
 	let activeForm = $state<string | null>(null);
 
@@ -22,6 +24,9 @@
 				isSubmitting = false;
 				activeForm = null;
 				await update();
+				if (key === 'screening_dates') screeningDatesContent = result.data.content;
+				if (key === 'prompt') promptContent = result.data.content;
+				if (key === 'colophon') colophonContent = result.data.content;
 			};
 		};
 	}
@@ -42,7 +47,7 @@
 	<!-- Page Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Content Management</h1>
+			<h1 class="font-bold text-2xl text-gray-900">Content Management</h1>
 			<p class="mt-1 text-sm text-gray-600">
 				Edit site content, including colophon text and screening dates
 			</p>
@@ -50,7 +55,7 @@
 		<div class="flex gap-4">
 			<a
 				href="/admin"
-				class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+				class="font-medium inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 			>
 				← Back to Dashboard
 			</a>
@@ -75,11 +80,11 @@
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
 				<div>
-					<h2 class="text-lg font-medium text-gray-900">Colophon</h2>
+					<h2 class="font-medium text-lg text-gray-900">Colophon</h2>
 					<p class="text-sm text-gray-600">Credits, acknowledgments, and project information</p>
 				</div>
 				<div class="text-xs text-gray-500">
-					{formatLastUpdated(data.content.colophon.updatedAt)}
+					{formatLastUpdated(data.content!.colophon.updatedAt)}
 				</div>
 			</div>
 
@@ -92,14 +97,8 @@
 				<input type="hidden" name="key" value="colophon" />
 
 				<div>
-					<Textarea
-						name="content"
-						bind:value={colophonContent}
-						rows={8}
-						placeholder="Enter colophon content here..."
-						class="w-full"
-						required
-					/>
+					<input type="hidden" name="content" bind:value={colophonContent} required />
+					<Wysiwyg bind:value={colophonContent} />
 				</div>
 
 				<div class="flex justify-end">
@@ -120,11 +119,11 @@
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
 				<div>
-					<h2 class="text-lg font-medium text-gray-900">Screening Dates</h2>
+					<h2 class="font-medium text-lg text-gray-900">Screening Dates</h2>
 					<p class="text-sm text-gray-600">Information about upcoming screening events</p>
 				</div>
 				<div class="text-xs text-gray-500">
-					{formatLastUpdated(data.content.screening_dates.updatedAt)}
+					{formatLastUpdated(data.content!.screening_dates.updatedAt)}
 				</div>
 			</div>
 
@@ -157,6 +156,50 @@
 							Saving...
 						{:else}
 							Save Screening Dates
+						{/if}
+					</Button>
+				</div>
+			</form>
+		</div>
+	</Card>
+
+	<Card class="p-6" size="lg">
+		<div class="space-y-4">
+			<div class="flex items-center justify-between">
+				<div>
+					<h2 class="font-medium text-lg text-gray-900">Analyze Prompt</h2>
+					<p class="text-sm text-gray-600">Prompt to use for analyzing user submitted video</p>
+				</div>
+				<div class="text-xs text-gray-500">
+					{formatLastUpdated(data.content!.prompt.updatedAt)}
+				</div>
+			</div>
+
+			<form
+				method="POST"
+				action="?/updateContent"
+				use:enhance={handleSubmit('prompt')}
+				class="space-y-4"
+			>
+				<input type="hidden" name="key" value="prompt" />
+
+				<div>
+					<Textarea
+						name="content"
+						bind:value={promptContent}
+						rows={6}
+						placeholder="Enter prompt..."
+						class="w-full"
+						required
+					/>
+				</div>
+
+				<div class="flex justify-end">
+					<Button type="submit" color="blue" disabled={isSubmitting && activeForm === 'prompt'}>
+						{#if isSubmitting && activeForm === 'prompt'}
+							Saving...
+						{:else}
+							Save Prompt
 						{/if}
 					</Button>
 				</div>

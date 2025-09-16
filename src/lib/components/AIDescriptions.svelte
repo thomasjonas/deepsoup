@@ -1,0 +1,22 @@
+<script lang="ts">
+	import AiDescription from './AIDescription.svelte';
+
+	let { description, onComplete }: { description: string; onComplete: () => void } = $props();
+
+	let descriptions = $derived.by(() => {
+		const items = description.match(/^- .+/gm);
+		console.log(description, items);
+		if (!items) return [];
+		return items.map((i) => i.replace('- ', '').trim());
+	});
+
+	let completed = 0;
+	function onCompleted() {
+		completed++;
+		if (completed >= descriptions.length) onComplete();
+	}
+</script>
+
+{#each descriptions as description, index}
+	<AiDescription text={description} {index} onComplete={onCompleted} />
+{/each}

@@ -28,7 +28,6 @@ export async function loadLetters() {
 	const svgs = await Promise.all(urls.map(loadSvg));
 	svgs.forEach((root, i) => {
 		const vertexSets = select(root, '#outline').map(function (path) {
-			console.log(path);
 			return Matter.Vertices.scale(
 				Matter.Svg.pathToVertices(path, 30),
 				0.85,
@@ -38,7 +37,6 @@ export async function loadLetters() {
 		});
 
 		const url = urls[i];
-		console.log(url);
 		// const letter = /\/([A-Z])\-/gi.exec(url)![1];
 		const letter = /\/([A-Z])\./gi.exec(url)![1];
 		letterVertices[letter] = vertexSets;

@@ -2,10 +2,10 @@ import Matter from 'matter-js';
 
 export class Walls {
 	thickness = 50;
-	left = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true });
-	top = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true });
-	right = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true });
-	bottom = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true });
+	left = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
+	top = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
+	right = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
+	bottom = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
 
 	constructor(params: { width: number; height: number }) {
 		this.setSize(params.width, params.height);
