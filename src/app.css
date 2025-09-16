@@ -85,7 +85,7 @@ body {
 }
 
 .info-content > * {
-	@apply rounded-2xl border-2 border-dotted p-2;
+	@apply rounded-2xl border-2 border-dotted px-4 py-3;
 }
 
 .info-content > * + * {

@@ -51,6 +51,8 @@
 	});
 
 	let description: string | undefined = $state();
+
+	let isDraggedOver = $state(false);
 </script>
 
 {#if description && !appState.finishedDescriptions}
@@ -65,7 +67,13 @@
 
 <div class=" pointer-events-none absolute z-50 min-h-screen w-screen">
 	<div
-		class="ui-text absolute rounded-3xl border-2 border-dashed border-black text-center leading-tight {boxClasses}"
+		class={[
+			`ui-text absolute rounded-3xl border-2 border-dashed border-black text-center leading-tight ${boxClasses}`,
+			{
+				'border-dashed': !isDraggedOver,
+				'bg-black text-white': isDraggedOver
+			}
+		]}
 		bind:this={boxElement}
 	>
 		{#if !video}
@@ -87,6 +95,7 @@
 					appState.showLetters = false;
 					appState.finishedDescriptions = false;
 				}}
+				onDragStateChange={(newSstate) => (isDraggedOver = newSstate)}
 			/>
 		{:else}
 			<MetaForm {video} onError={(message: string) => (uploadError = message)} />

@@ -7,7 +7,8 @@
 		onError,
 		onSuccess,
 		onDescription,
-		onStart
+		onStart,
+		onDragStateChange
 	}: {
 		onError: (message: string) => void;
 		onSuccess: ({
@@ -25,6 +26,7 @@
 		}) => void;
 		onDescription: (description: string) => void;
 		onStart: () => void;
+		onDragStateChange: (state: boolean) => void;
 	} = $props();
 
 	let dragZone: HTMLDivElement;
@@ -115,7 +117,7 @@
 	// Handle drag and drop
 	function handleDrop(event: DragEvent) {
 		event.preventDefault();
-		// dragZone.classList.remove('border-blue-500', 'bg-blue-50');
+		onDragStateChange(false);
 
 		const file = event.dataTransfer?.files[0];
 		if (file && file.type.startsWith('video/')) {
@@ -128,12 +130,12 @@
 
 	function handleDragOver(event: DragEvent) {
 		event.preventDefault();
-		// dragZone.classList.add('border-blue-500', 'bg-blue-50');
+		onDragStateChange(true);
 	}
 
 	function handleDragLeave(event: DragEvent) {
 		event.preventDefault();
-		// dragZone.classList.remove('border-blue-500', 'bg-blue-50');
+		onDragStateChange(false);
 	}
 
 	// Process selected file
