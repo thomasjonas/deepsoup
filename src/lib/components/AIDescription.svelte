@@ -1,7 +1,6 @@
 <script lang="ts">
+	import { animate, text as splitter } from 'animejs';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import { animate, text as splitter, stagger } from 'animejs';
 
 	let { text, index, onComplete }: { text: string; index: number; onComplete: () => void } =
 		$props();
