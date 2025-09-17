@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { RectangleLayout } from './rectangle-layout.svelte';
 
 export let appContent: Record<string, string> = $state({});
 export const boxState: { x: number; y: number; width: number; height: number } = $state({
@@ -8,16 +8,24 @@ export const boxState: { x: number; y: number; width: number; height: number } =
 	height: 0
 });
 
-export const updateBoxState = (newSate: {
+export const updateBoxState = (newState: {
 	x: number;
 	y: number;
 	width: number;
 	height: number;
 }) => {
-	boxState.x = newSate.x;
-	boxState.y = newSate.y;
-	boxState.width = newSate.width;
-	boxState.height = newSate.height;
+	boxState.x = newState.x;
+	boxState.y = newState.y;
+	boxState.width = newState.width;
+	boxState.height = newState.height;
+
+	RectangleLayout.addExclusion({
+		id: 'box',
+		x: newState.x,
+		y: newState.y,
+		w: newState.width,
+		h: newState.height
+	});
 };
 
 export let appState = $state({

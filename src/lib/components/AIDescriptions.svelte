@@ -17,6 +17,10 @@
 	}
 </script>
 
-{#each descriptions as description, index}
-	<AiDescription text={description} {index} onComplete={onCompleted} />
-{/each}
+<div class="pointer-events-none fixed inset-0">
+	<div class="relative h-full w-full overflow-hidden">
+		{#each descriptions as description, index}
+			<AiDescription text={description} {index} onComplete={onCompleted} />
+		{/each}
+	</div>
+</div>

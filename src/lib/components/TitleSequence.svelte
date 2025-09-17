@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { RectangleLayout } from '$lib/rectangle-layout.svelte';
 	import { onDestroy } from 'svelte';
 
 	const texts = [
@@ -34,12 +35,24 @@
 	onDestroy(() => {
 		if (typeof timeout !== 'undefined') clearTimeout(timeout);
 	});
+
+	let rectSize = $state({
+		width: 0,
+		height: 0
+	});
+	$effect(() => {
+		const { width, height } = rectSize;
+
+		RectangleLayout.addExclusion({ id: 'top', x: 0, y: 0, w: width, h: height });
+	});
 </script>
 
 <div
-	class="ui-text lg pointer-events-none absolute top-0 z-[102] flex w-screen items-start justify-between px-3.5 pt-2.5 leading-tight lg:px-8 lg:pt-4"
+	class="ui-text lg pointer-events-none absolute top-0 z-[102] flex w-screen items-start px-3.5 pt-2.5 pb-4 leading-tight lg:px-8 lg:pt-4"
+	bind:clientWidth={rectSize.width}
+	bind:clientHeight={rectSize.height}
 >
-	<h1 class="pr-4">
+	<h1 class="grow pr-4">
 		{text}
 	</h1>
 
