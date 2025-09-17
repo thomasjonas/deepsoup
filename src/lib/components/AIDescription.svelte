@@ -16,7 +16,7 @@
 		setTimeout(
 			() => {
 				const { chars } = splitter.split(textContainer, {
-					chars: { wrap: 'clip' }
+					chars: { wrap: 'visible' }
 				});
 
 				textContainer.style.opacity = '1';
@@ -43,7 +43,7 @@
 </script>
 
 <div
-	class="ai-description pointer-events-none absolute max-w-[300px] text-[27px] leading-tight text-white lg:max-w-[550px] lg:text-[60px]"
+	class="ai-description pointer-events-none absolute max-w-[300px] text-center text-[27px] leading-[1] text-white lg:max-w-[550px] lg:text-[60px]"
 	style={`transform: translate(${position.x}px, ${position.y}px)`}
 >
 	<div class="opacity-0" style="" bind:this={textContainer}>

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Matter from 'matter-js';
 	import { onMount } from 'svelte';
-	import decomp from 'poly-decomp';
+	import { quickDecomp } from 'poly-decomp-es';
+
 	import 'pathseg';
 	import { loadLetters } from '$lib/matter/utils';
 	import { Walls } from '$lib/matter/Walls';
@@ -26,7 +27,7 @@
 		Events = Matter.Events;
 
 	// provide concave decomposition support library
-	Common.setDecomp(decomp);
+	Common.setDecomp(quickDecomp);
 
 	function setBodySize(body: Matter.Body, targetHeight: number) {
 		const currentHeight = body.bounds.max.y - body.bounds.min.y;
@@ -76,7 +77,7 @@
 
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
-	let bodyScale = $derived(-60 + Math.sqrt(windowWidth / 390) * 210);
+	let bodyScale = $derived(-60 + Math.sqrt(windowWidth / 390) * 230);
 
 	let walls: Walls;
 	let box: Box;

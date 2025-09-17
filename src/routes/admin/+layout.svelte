@@ -4,7 +4,7 @@
 	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
 	import { ArrowRightToBracketOutline, FileSolid, HomeSolid } from 'flowbite-svelte-icons';
 
-	let { data } = $props();
+	let { data, children } = $props();
 	let activeUrl = $state(page.url.pathname);
 	$effect(() => {
 		activeUrl = page.url.pathname;
@@ -74,6 +74,6 @@
 
 	<!-- Main Content -->
 	<div class="flex-1 p-8 px-4 md:ml-64">
-		<slot />
+		{@render children?.()}
 	</div>
 </div>

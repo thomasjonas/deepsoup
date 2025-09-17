@@ -8,7 +8,7 @@
 
 	let uploadError = $state('');
 	$effect(() => {
-		console.error(uploadError);
+		if (uploadError) console.error(uploadError);
 	});
 	let video:
 		| {
