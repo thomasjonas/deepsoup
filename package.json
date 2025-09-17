@@ -61,6 +61,7 @@
 		"openai": "^5.15.0",
 		"pathseg": "^1.2.1",
 		"poly-decomp-es": "^0.4.2",
+		"svelte-fast-marquee": "^1.0.2",
 		"tus-js-client": "^4.3.1",
 		"uuid": "^11.1.0"
 	}

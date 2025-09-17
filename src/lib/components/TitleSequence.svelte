@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { RectangleLayout } from '$lib/rectangle-layout.svelte';
 	import { onDestroy } from 'svelte';
+	import Marquee from 'svelte-fast-marquee';
 
 	const texts = [
 		'DEEP SOUP the film',
@@ -16,25 +17,6 @@
 		'DEEP SOUP',
 		'Boom! Bang! Frrrrrrriction'
 	];
-
-	let textIndex = $state(0);
-	let text = $derived(texts[textIndex]);
-
-	let timeout: NodeJS.Timeout;
-
-	const WPM = 140;
-	$effect(() => {
-		const wps = 140 / 60;
-		const duration = text.split(' ').length * wps;
-		timeout = setTimeout(() => {
-			textIndex++;
-			if (textIndex > texts.length - 1) textIndex = 0;
-		}, duration * 1000);
-	});
-
-	onDestroy(() => {
-		if (typeof timeout !== 'undefined') clearTimeout(timeout);
-	});
 
 	let rectSize = $state({
 		width: 0,
@@ -52,14 +34,23 @@
 	bind:clientWidth={rectSize.width}
 	bind:clientHeight={rectSize.height}
 >
-	<h1 class="grow pr-4">
-		{text}
+	<h1 class="lg:-pl-8 -ml-3.5 min-w-0 flex-1 pr-4">
+		<div class="w-full overflow-hidden">
+			<Marquee play speed={texts.join('').length / 10}>
+				{#each texts as t}
+					<div class="pl-3.5 lg:pl-8">{t}</div>
+					<div
+						class=" top-[0.2em] right-0 -mr-1.5 ml-2 aspect-square h-[0.8em] rounded-full bg-black lg:-mr-6"
+					></div>
+				{/each}
+			</Marquee>
+		</div>
 	</h1>
 
 	{#if page.url.pathname !== '/info'}
 		<a
 			href="/info"
-			class=" pointer-events-auto underline decoration-2 underline-offset-3 lg:decoration-3 lg:underline-offset-4"
+			class=" pointer-events-auto shrink-0 underline decoration-2 underline-offset-3 lg:decoration-3 lg:underline-offset-4"
 			>Info</a
 		>
 	{/if}
