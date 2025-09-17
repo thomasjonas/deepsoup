@@ -210,8 +210,6 @@ Use the following format:
 			uploadFormData.append('duration', videoPreview.duration.toString());
 			uploadFormData.append('fileSize', selectedFile.size.toString());
 
-			console.log(uploadFormData);
-
 			// Upload to server using Fetch API
 			const response = await fetch('/api/upload-video', {
 				method: 'POST',
@@ -311,7 +309,12 @@ Focus on the main subject, actions, mood, and visual style. Be creative but accu
 				>
 					{#if selectedFile}
 						<div class="space-y-4">
-							<video bind:this={videoPreview} class="max-h-48 w-full rounded-lg" controls muted
+							<video
+								bind:this={videoPreview}
+								class="max-h-48 w-full rounded-lg"
+								controls
+								muted
+								playsinline
 							></video>
 							<div class="text-sm text-gray-600">
 								<p class="font-medium">{selectedFile.name}</p>

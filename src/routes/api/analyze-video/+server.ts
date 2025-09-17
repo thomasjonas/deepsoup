@@ -7,9 +7,15 @@ import { siteContent } from '$lib/server/db/schema';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const { screenshots } = await request.json();
-		const prompts = await db.select().from(siteContent).where(eq(siteContent.key, 'prompt'));
-		const prompt = prompts.pop();
+		const { screenshots, prompt: p } = await request.json();
+		let prompt = p;
+		if (!prompt) {
+			const prompts =
+				p ?? (await db.select().from(siteContent).where(eq(siteContent.key, 'prompt')));
+			prompt = prompts.pop().content;
+		}
+
+		console.log({ prompt });
 
 		if (!prompt) {
 			return json(
@@ -32,7 +38,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Analyze screenshots with OpenAI
-		const analysis = await analyzeVideoScreenshots(prompt.content, screenshots);
+		const analysis = await analyzeVideoScreenshots(prompt, screenshots);
 
 		if (analysis.success) {
 			return json({
