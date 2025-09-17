@@ -1,96 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { env } from '$env/dynamic/public';
+	import { PUBLIC_BUNNY_STORAGE_ZONE_NAME } from '$env/static/public';
 	import { type getAllVideos } from '$lib/server/db/videos';
-	import { Table } from '@flowbite-svelte-plugins/datatable';
-	import { Button, Card, Datepicker, Modal } from 'flowbite-svelte';
-	import { PlusOutline } from 'flowbite-svelte-icons';
-	import type { DataTableOptions } from 'simple-datatables';
+	import type { ColumnDef, Row } from '@tanstack/table-core';
+	import dayjs from 'dayjs';
+	import { Card } from 'flowbite-svelte';
+	import type { DataTable } from 'simple-datatables';
+	import { createRawSnippet } from 'svelte';
+	import { headerComponent, renderComponent, renderSnippet } from './data-table/render-helpers';
+	import TableActions from './data-table/table-actions.svelte';
+	import TanstackTable from './TanstackTable.svelte';
+	import VideoModal from './VideoModal.svelte';
 
 	type Video = Awaited<ReturnType<typeof getAllVideos>>[0];
 
 	let { videos } = $props<{ videos: Video[] }>();
-
-	let dateRange = $state({
-		from: undefined as Date | undefined,
-		to: undefined as Date | undefined
-	});
-
-	let options: DataTableOptions = $state({
-		perPage: 25,
-		perPageSelect: false,
-		data: {
-			headings: [
-				'ID',
-				'Thumbnail',
-				'Video Title',
-				'Uploader',
-				'Duration',
-				'Size',
-				'Status',
-				'Uploaded',
-				'Actions'
-			],
-			data: []
-		},
-		columns: [
-			{ select: 0, hidden: true }, // id
-			{
-				select: 1,
-				render: (data: any, cell: any, _dataIndex: number) => {
-					return `<img src="${data[0].data}" class="h-10 w-auto" />`;
-				}
-			}, // thumbnailUrl
-			{ select: 2 }, // title
-			{ select: 3, type: 'string' }, // userName
-			{ select: 4 }, // duration
-			{ select: 5 }, // size
-			{ select: 6 }, // status
-			// { select: 7, type: 'date', format: 'YYYY MM' }, // uploadDate
-			{ select: 7 }, // uploadDate
-
-			{
-				select: 8,
-				sortable: false,
-				render: (data: any, cell: any, _dataIndex: number) => {
-					const videoId = data[0].data;
-					return `<a href="#video-${videoId}" class="text-blue-500 hover:underline">Details</a>`;
-				}
-			}
-		]
-	});
-
-	$effect(() => {
-		const filtered = videos.filter((video: Video) => {
-			if (!dateRange.from || !dateRange.to) {
-				return true;
-			}
-			if (!video.uploadDate) return false;
-			const uploadDate = new Date(video.uploadDate);
-			uploadDate.setHours(0, 0, 0, 0);
-			const fromDate = new Date(dateRange.from);
-			fromDate.setHours(0, 0, 0, 0);
-			const toDate = new Date(dateRange.to);
-			toDate.setHours(0, 0, 0, 0);
-			return uploadDate >= fromDate && uploadDate <= toDate;
-		});
-
-		const newData = filtered.map((video: Video) => [
-			video.id,
-			`https://${env.PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/${video.bunnyVideoId}/thumbnail.jpg`,
-			video.title || 'Untitled Video',
-			video.userName,
-			video.durationFormatted || '-',
-			`${video.fileSizeMB} MB`,
-			video.status,
-			video.uploadDate,
-			video.id
-		]);
-
-		options.data.data = newData;
-	});
-
-	let showModal = $state(false);
 
 	let selectedVideo: Video | undefined = $derived.by(() => {
 		const hash = page.url.hash;
@@ -102,15 +27,83 @@
 	});
 
 	$effect(() => {
-		const hash = page.url.hash;
-		if (`#video-${selectedVideo?.id}` === hash) {
-			showModal = true;
-		}
+		if (!selectedVideo && page.url.hash.startsWith('#video-')) window.location.hash = '';
 	});
 
-	$effect(() => {
-		if (!showModal && page.url.hash.startsWith('#video-')) window.location.hash = '';
-	});
+	function onSelectRow(rowIndex: number, event: Event, dataTable: DataTable) {
+		goto(`#video-${dataTable.data.data[rowIndex].cells[0].text}`);
+		console.log();
+	}
+
+	const columns: ColumnDef<Video>[] = [
+		{
+			accessorKey: 'bunnyVideoId',
+			header: 'Thumbnail',
+			cell: ({ row }) =>
+				renderSnippet(
+					createRawSnippet<[string]>(() => {
+						return {
+							render: () =>
+								`<img class="aspect-square object-contain h-12 -my-4 w-auto" src="https://${PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/${row.original.bunnyVideoId}/thumbnail.jpg" />`
+						};
+					})
+				),
+			enableSorting: false
+		},
+		// {
+		// 	accessorKey: ,
+		// 	header: 'Thumbnail',
+		// 	cell: ({ row }) =>
+		// 		renderSnippet(
+		// 			createRawSnippet<[string]>(() => {
+		// 				return {
+		// 					render: () =>
+		// 						`<img class="aspect-square object-contain h-16 w-auto" src="https://${PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/${row.original.bunnyVideoId}/thumbnail.jpg" />`
+		// 				};
+		// 			})
+		// 		),
+		// 	enableSorting: false
+		// },
+		{
+			accessorKey: 'originalFilename',
+			header: (ctx) => headerComponent('Filename', ctx)
+		},
+		{
+			accessorKey: 'userName',
+			header: (ctx) => headerComponent('Uploader', ctx)
+		},
+		{
+			accessorKey: 'durationFormatted',
+			header: (ctx) => headerComponent('Duration', ctx)
+		},
+		{
+			accessorKey: 'fileSizeMB',
+			header: (ctx) => headerComponent('Size', ctx),
+			cell: (ctx) => {
+				return `${ctx.getValue()} MB`;
+			}
+		},
+		{
+			accessorKey: 'uploadDate',
+			header: (ctx) => headerComponent('Uploaded', ctx),
+			cell: (ctx) => {
+				const time = ctx.getValue() as string;
+				return dayjs(time).format('MMMM D, YYYY HH:mm');
+			}
+		},
+		{
+			id: 'actions',
+			enableHiding: false,
+			cell: ({ row }) => {
+				return renderComponent(TableActions, {
+					downloadLink: `/download/${row.original.bunnyVideoId}?filename=${row.original.originalFilename}`,
+					onRemove: () => {
+						confirm(`Are you sure you want to remove video ${row.original.id}?`);
+					}
+				});
+			}
+		}
+	];
 </script>
 
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
@@ -122,45 +115,12 @@
 			>
 		</div>
 	</div>
-	<div class="mb-4 flex items-center justify-end space-x-4">
-		<Datepicker
-			range
-			bind:rangeFrom={dateRange.from}
-			bind:rangeTo={dateRange.to}
-			placeholder="Filter by upload date"
-		/>
-	</div>
 
-	<Table dataTableOptions={options} selectable={true} onSort={console.log} />
+	<TanstackTable
+		data={videos}
+		{columns}
+		onRowClick={(row: Row<Video>) => (selectedVideo = row.original)}
+	/>
 </Card>
 
-{#if selectedVideo}
-	<Modal title={selectedVideo?.title || 'Video Details'} bind:open={showModal} size="lg">
-		<div style="position:relative;padding-top:56.25%;">
-			<div class="absolute inset-0 overflow-hidden">
-				<img
-					alt="preview thumbnail"
-					class="h-full w-full scale-105 object-cover blur-md"
-					src="https://{env.PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/{selectedVideo.bunnyVideoId}/thumbnail.jpg"
-				/>
-			</div>
-			<iframe
-				title={selectedVideo.title}
-				src={selectedVideo.bunnyStreamUrl}
-				style="border:0;position:absolute;top:0;height:100%;width:100%;"
-				allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
-				allowfullscreen
-			></iframe>
-		</div>
-		<div class="space-y-2">
-			<p><strong>Uploader:</strong> {selectedVideo.userName}</p>
-			<p><strong>Status:</strong> {selectedVideo.status}</p>
-			<p><strong>Duration:</strong> {selectedVideo.durationFormatted}</p>
-			<p><strong>Size:</strong> {selectedVideo.fileSizeMB} MB</p>
-			<p>
-				<strong>Uploaded:</strong>
-				{selectedVideo.uploadDate ? new Date(selectedVideo.uploadDate).toLocaleString() : '-'}
-			</p>
-		</div>
-	</Modal>
-{/if}
+<VideoModal video={selectedVideo} onClose={() => (selectedVideo = undefined)} />
