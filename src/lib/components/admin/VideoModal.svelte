@@ -5,7 +5,8 @@
 	import { DownloadSolid, TrashBinSolid } from 'flowbite-svelte-icons';
 
 	type Video = Awaited<ReturnType<typeof getAllVideos>>[0];
-	let { video, onClose }: { video?: Video; onClose: () => void } = $props();
+	let { video, onClose, onRemove }: { video?: Video; onClose: () => void; onRemove: () => void } =
+		$props();
 
 	let showModal = $derived(!!video);
 </script>
@@ -47,7 +48,7 @@
 			</div>
 		</div>
 		<div class="flex gap-4">
-			<Button color="red"><TrashBinSolid />Remove</Button>
+			<Button color="red" onclick={onRemove}><TrashBinSolid />Remove</Button>
 			<Button
 				color="blue"
 				download

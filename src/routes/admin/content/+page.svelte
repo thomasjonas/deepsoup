@@ -3,7 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { formatDistanceToNow } from 'date-fns';
 	import type { PageData, ActionData } from './$types';
-	import Wysiwyg from '$lib/components/Wysiwyg.svelte';
+	import Wysiwyg from '$lib/components/admin/Wysiwyg.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 

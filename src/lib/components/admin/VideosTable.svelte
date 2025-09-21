@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { PUBLIC_BUNNY_STORAGE_ZONE_NAME } from '$env/static/public';
 	import { type getAllVideos } from '$lib/server/db/videos';
@@ -30,10 +30,10 @@
 		if (!selectedVideo && page.url.hash.startsWith('#video-')) window.location.hash = '';
 	});
 
-	function onSelectRow(rowIndex: number, event: Event, dataTable: DataTable) {
-		goto(`#video-${dataTable.data.data[rowIndex].cells[0].text}`);
-		console.log();
-	}
+	// function onSelectRow(rowIndex: number, event: Event, dataTable: DataTable) {
+	// 	goto(`#video-${dataTable.data.data[rowIndex].cells[0].text}`);
+	// 	console.log();
+	// }
 
 	const columns: ColumnDef<Video>[] = [
 		{
@@ -97,13 +97,19 @@
 			cell: ({ row }) => {
 				return renderComponent(TableActions, {
 					downloadLink: `/download/${row.original.bunnyVideoId}?filename=${row.original.originalFilename}`,
-					onRemove: () => {
-						confirm(`Are you sure you want to remove video ${row.original.id}?`);
-					}
+					onRemove: () => removeHandler(row.original.id)
 				});
 			}
 		}
 	];
+
+	async function removeHandler(videoId: number | string) {
+		const confirmation = confirm(`Are you sure you want to remove video ${videoId}?`);
+		if (!confirmation) return;
+
+		await fetch(`/api/delete-video/${videoId}`, { method: 'DELETE' });
+		await invalidateAll();
+	}
 </script>
 
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
@@ -123,4 +129,8 @@
 	/>
 </Card>
 
-<VideoModal video={selectedVideo} onClose={() => (selectedVideo = undefined)} />
+<VideoModal
+	video={selectedVideo}
+	onClose={() => (selectedVideo = undefined)}
+	onRemove={() => selectedVideo && removeHandler(selectedVideo?.id)}
+/>

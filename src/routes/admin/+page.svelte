@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Card } from 'flowbite-svelte';
-	import VideosTable from '$lib/components/VideosTable.svelte';
+	import VideosTable from '$lib/components/admin/VideosTable.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

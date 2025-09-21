@@ -31,6 +31,12 @@
 
 <svelte:head>
 	<title>Admin Dashboard - Video Upload Platform</title>
+
+	<style>
+		body {
+			background-color: oklch(98.5% 0.002 247.839);
+		}
+	</style>
 </svelte:head>
 
 <div class="flex min-h-screen bg-gray-50">
