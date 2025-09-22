@@ -3,6 +3,7 @@
 		Divider,
 		FormatButton,
 		InvisibleButtonGroup,
+		LayoutButtonGroup,
 		ListButtonGroup,
 		TextEditor,
 		ToolbarRowWrapper,
@@ -35,6 +36,7 @@
 	<ToolbarRowWrapper>
 		<FormatButton {editor} format="link" />
 		<FormatButton {editor} format="removeLink" />
+		<LayoutButtonGroup {editor} hr={true} blockquote={false} codeblock={false} />
 		<Divider />
 		<ListButtonGroup {editor} />
 		<Divider />

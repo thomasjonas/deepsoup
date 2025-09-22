@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { topState } from '$lib/state.svelte';
+	import DashedBox from './DashedBox.svelte';
 
 	let { content } = $props();
 
 	let top = $state(0);
 	topState.subscribe((newState) => {
 		top = newState.height - 5;
+	});
+
+	let blocks = $derived.by(() => {
+		return content.split('<hr>');
 	});
 </script>
 
@@ -14,6 +19,10 @@
 	style="top: {top}px"
 >
 	<div class="info-content body-text mx-auto pt-2 pb-2 leading-snug lg:max-w-[740px] lg:pt-0">
-		{@html content}
+		{#each blocks as block}
+			<DashedBox class="block">
+				{@html block}
+			</DashedBox>
+		{/each}
 	</div>
 </div>

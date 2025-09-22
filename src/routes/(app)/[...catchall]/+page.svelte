@@ -6,8 +6,6 @@
 	import TitleSequence from '$lib/components/TitleSequence.svelte';
 	import VideoUploader from '$lib/components/VideoUploader.svelte';
 	import { appState, updateBoxState } from '$lib/state.svelte';
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 
 	let uploadError = $state('');
 	$effect(() => {

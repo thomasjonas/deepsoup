@@ -85,9 +85,12 @@ body {
 	@apply bg-green antialiased;
 }
 
-.info-content > * {
-	@apply rounded-2xl px-6 pt-4 pb-5;
-	outline: 3px dashed black;
+.info-content > .block {
+	@apply px-6 pt-4 pb-5 lg:px-8 lg:py-6;
+}
+
+.info-content ul {
+	@apply list-disc pl-[1.25em];
 }
 
 .info-content a {
