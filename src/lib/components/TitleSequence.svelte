@@ -38,7 +38,7 @@
 </script>
 
 <div
-	class="ui-text lg pointer-events-none absolute top-0 z-[102] flex w-screen items-start px-3.5 pt-2.5 pb-4 leading-tight lg:px-8 lg:pt-4"
+	class="ui-text lg pointer-events-none flex w-screen items-start px-3.5 pt-2.5 pb-4 leading-tight lg:px-4 lg:pt-4"
 	bind:clientWidth={rectSize.width}
 	bind:clientHeight={rectSize.height}
 >

@@ -42,6 +42,7 @@
 	let description = $state('');
 	let videoId: string = $state('');
 	let uploadStartTime = $state(Date.now());
+	let text = $state('Uploading');
 
 	$effect(() => {
 		fileSize = selectedFile?.size ?? 0;
@@ -147,13 +148,14 @@
 		}
 
 		// Check file size (300MB limit)
-		if (file.size > 300 * 1024 * 1024) {
-			onError('File size must be less than 300MB');
-			return;
-		}
+		// if (file.size > 300 * 1024 * 1024) {
+		// 	onError('File size must be less than 300MB');
+		// 	return;
+		// }
 
 		onStart();
 		selectedFile = file;
+		text = 'Uploading';
 		onError('');
 
 		// Wait for DOM to update so video element is rendered
@@ -217,6 +219,7 @@
 			console.error('Error extracting screenshots:', error);
 			onError('Failed to analyze video content');
 		} finally {
+			text = 'Analysing';
 			isAnalyzing = false;
 			checkSuccess();
 		}
@@ -269,11 +272,7 @@
 >
 	{#if selectedFile}
 		<video bind:this={videoPreview} class="hidden" playsinline controls muted></video>
-		{#if isAnalyzing}
-			Uploading
-		{:else}
-			Analysing
-		{/if}
+		{text}
 	{:else}
 		<button type="button" onclick={() => fileInput.click()} class="">
 			<span class="lg:hidden">Tap to upload your video</span>
