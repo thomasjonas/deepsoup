@@ -86,7 +86,7 @@ body {
 }
 
 .info-content > * {
-	@apply rounded-2xl px-6 pb-5 pt-4;
+	@apply rounded-2xl px-6 pt-4 pb-5;
 	outline: 3px dashed black;
 }
 
@@ -103,7 +103,11 @@ body {
 }
 
 .input-container input {
-	@apply min-w-0 rounded-full border-0 bg-transparent px-5 pb-5 focus:ring-0 lg:pt-4 lg:text-[24px];
+	@apply min-w-0 rounded-full border-0 bg-transparent px-4 pt-2 pb-2.5 focus:ring-0 lg:px-5 lg:py-4 lg:text-[24px];
+}
+
+.input-container [type='checkbox']:checked {
+	@apply bg-none text-black;
 }
 
 .ai-description {

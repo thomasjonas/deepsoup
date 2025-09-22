@@ -87,20 +87,24 @@
 		<div class="input-container">
 			<label for="name" class="">Name</label>
 			<div class="relative flex flex-1">
-				<DashedBox class="grow">
-					<input id="name" type="text" bind:value={formData.name} required />
+				<DashedBox class="grow" fullyRounded>
+					<input id="name" class="w-full" type="text" bind:value={formData.name} required />
 				</DashedBox>
 			</div>
 		</div>
 
 		<div class="input-container">
 			<label for="email" class="">Email</label>
-			<input id="email" type="email" bind:value={formData.email} required class="grow" />
+			<DashedBox class="grow" fullyRounded>
+				<input id="email" class="w-full" type="email" bind:value={formData.email} required />
+			</DashedBox>
 		</div>
 
 		<div class="input-container">
 			<label for="instagram" class=""> Instagram </label>
-			<input id="instagram" type="text" bind:value={formData.instagramHandle} class="shrink grow" />
+			<DashedBox class="shrink grow" fullyRounded>
+				<input id="instagram" type="text" bind:value={formData.instagramHandle} class=" w-full" />
+			</DashedBox>
 		</div>
 
 		<div class="input-container justify-between">
@@ -109,12 +113,14 @@
 					>terms and conditions</a
 				></label
 			>
-			<input
-				id="terms_conditions"
-				type="checkbox"
-				bind:checked={formData.termsAndConditions}
-				class="h-[45px] w-[45px] lg:h-[80px] lg:w-[80px]"
-			/>
+			<DashedBox fullyRounded>
+				<input
+					id="terms_conditions"
+					type="checkbox"
+					bind:checked={formData.termsAndConditions}
+					class="-mr-px -mb-px h-[45px] w-[45px] lg:h-[80px] lg:w-[80px]"
+				/>
+			</DashedBox>
 		</div>
 
 		<button

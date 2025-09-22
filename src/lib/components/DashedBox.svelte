@@ -5,12 +5,14 @@
 		children,
 		class: klass,
 		onSizeChanged,
+		fullyRounded,
 		animate = $bindable()
 	}: {
 		onSizeChanged?: (size: { x: number; y: number; width: number; height: number }) => void;
-		class: any;
+		class?: any;
 		children: Snippet<[]>;
 		animate?: boolean;
+		fullyRounded?: boolean;
 	} = $props();
 
 	let container: HTMLDivElement;
@@ -91,6 +93,15 @@
 
 		return stop;
 	});
+
+	const borderRadius = $derived(
+		fullyRounded
+			? (size.height - dashSettings.strokeWidth) / 2
+			: Math.max(
+					0,
+					Math.min((size.height - dashSettings.strokeWidth) / 2, dashSettings.borderRadius)
+				)
+	);
 </script>
 
 <svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
@@ -114,8 +125,8 @@
 			y={dashSettings.strokeWidth / 2}
 			width={Math.max(0, size.width - dashSettings.strokeWidth)}
 			height={Math.max(0, size.height - dashSettings.strokeWidth)}
-			rx={dashSettings.borderRadius}
-			ry={dashSettings.borderRadius}
+			rx={borderRadius}
+			ry={borderRadius}
 			fill="none"
 			stroke="black"
 			stroke-dashoffset={offset}
