@@ -16,7 +16,7 @@ export class Box {
 	}
 
 	update(x: number, y: number, width: number, height: number) {
-		if (!this.world) return;
+		if (!this.world || width === 0 || height === 0) return;
 		if (this.body) Matter.World.remove(this.world, this.body);
 
 		this.body = Matter.Bodies.rectangle(x, y, width, height, {

@@ -1,13 +1,17 @@
 import Matter from 'matter-js';
 
-export class Walls {
-	thickness = 50;
-	left = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
-	top = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
-	right = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
-	bottom = Matter.Bodies.rectangle(0, 0, 0, 0, { isStatic: true, render: { visible: false } });
+const DEBUG = false;
 
-	constructor(params: { width: number; height: number; positionTop: number }) {
+export class Walls {
+	world;
+	thickness = 50;
+	left?: Matter.Body;
+	right?: Matter.Body;
+	bottom?: Matter.Body;
+	top?: Matter.Body;
+
+	constructor(params: { world: Matter.World; width: number; height: number; positionTop: number }) {
+		this.world = params.world;
 		this.setSize(params.width, params.height, params.positionTop);
 	}
 
@@ -16,42 +20,46 @@ export class Walls {
 	}
 
 	setSize(width: number, height: number, positionTop: number) {
-		Matter.Body.setPosition(this.top, { x: width / 2, y: positionTop + -this.thickness / 2 });
-		Matter.Body.setVertices(this.top, [
-			{ x: -width / 2, y: positionTop + -this.thickness / 2 },
-			{ x: width / 2, y: positionTop + -this.thickness / 2 },
-			{ x: width / 2, y: positionTop + this.thickness / 2 },
-			{ x: -width / 2, y: positionTop + this.thickness / 2 }
-		]);
-
-		Matter.Body.setPosition(this.bottom, {
-			x: width / 2,
-			y: positionTop + height + this.thickness / 2
+		if (height === 0 || width === 0) return;
+		// Remove old bodies if they exist
+		[this.top, this.bottom, this.left, this.right].forEach((body) => {
+			if (body) Matter.World.remove(this.world, body);
 		});
-		Matter.Body.setVertices(this.bottom, [
-			{ x: -width / 2, y: positionTop + -this.thickness / 2 },
-			{ x: width / 2, y: positionTop + -this.thickness / 2 },
-			{ x: width / 2, y: positionTop + this.thickness / 2 },
-			{ x: -width / 2, y: positionTop + this.thickness / 2 }
-		]);
 
-		Matter.Body.setPosition(this.left, { x: -this.thickness / 2, y: positionTop + height / 2 });
-		Matter.Body.setVertices(this.left, [
-			{ x: -this.thickness / 2, y: positionTop + -height / 2 },
-			{ x: -this.thickness / 2, y: positionTop + height / 2 },
-			{ x: this.thickness / 2, y: positionTop + height / 2 },
-			{ x: this.thickness / 2, y: positionTop + -height / 2 }
-		]);
+		// Create new walls
+		this.top = Matter.Bodies.rectangle(
+			width / 2,
+			positionTop - this.thickness / 2,
+			width,
+			this.thickness,
+			{ isStatic: true, render: { visible: DEBUG } }
+		);
 
-		Matter.Body.setPosition(this.right, {
-			x: width + this.thickness / 2,
-			y: positionTop + height / 2
-		});
-		Matter.Body.setVertices(this.right, [
-			{ x: -this.thickness / 2, y: positionTop + -height / 2 },
-			{ x: -this.thickness / 2, y: positionTop + height / 2 },
-			{ x: this.thickness / 2, y: positionTop + height / 2 },
-			{ x: this.thickness / 2, y: positionTop + -height / 2 }
-		]);
+		this.bottom = Matter.Bodies.rectangle(
+			width / 2,
+			positionTop + height + this.thickness / 2,
+			width,
+			this.thickness,
+			{ isStatic: true, render: { visible: DEBUG, fillStyle: 'red' } }
+		);
+
+		this.left = Matter.Bodies.rectangle(
+			-this.thickness / 2,
+			positionTop + height / 2,
+			this.thickness,
+			height,
+			{ isStatic: true, render: { visible: DEBUG } }
+		);
+
+		this.right = Matter.Bodies.rectangle(
+			width + this.thickness / 2,
+			positionTop + height / 2,
+			this.thickness,
+			height,
+			{ isStatic: true, render: { visible: DEBUG } }
+		);
+
+		// Add new walls to the world
+		Matter.World.add(this.world, [this.top, this.bottom, this.left, this.right]);
 	}
 }

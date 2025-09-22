@@ -94,7 +94,8 @@
 	});
 
 	function updateBoxSize(newSize: { x: number; y: number; width: number; height: number }) {
-		box?.update(
+		if (!box) return;
+		box.update(
 			newSize.x + newSize.width / 2,
 			newSize.y + newSize.height / 2,
 			newSize.width,
@@ -133,11 +134,11 @@
 		Runner.run(runner, engine);
 
 		walls = new Walls({
+			world,
 			width: windowWidth,
 			height: windowHeight,
 			positionTop: get(topState).height
 		});
-		Composite.add(world, walls.getBodies());
 
 		const letters = await loadLetters();
 		let deepWidth = 0;
