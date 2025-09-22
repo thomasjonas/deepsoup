@@ -44,9 +44,27 @@
 	// const gravityRadius = 0.01;
 	// const gravitySpeed = 0.0001;
 	Events.on(engine, 'afterUpdate', (event) => {
+		const driftForce = 0.05; // smaller = smoother drift
+		const wanderSpeed = 20; // how fast the target moves
+
 		letterBodies.forEach((body, i) => {
 			const svg = svgs[i];
 			if (!svg) return;
+
+			const target = body.plugin.driftTarget;
+
+			// Make the drift target wander a little
+			target.x += (Math.random() - 0.5) * target.wanderRadius * 0.01 * wanderSpeed;
+			target.y += (Math.random() - 0.5) * target.wanderRadius * 0.01 * wanderSpeed;
+
+			// Clamp the target to the screen bounds
+			target.x = Math.max(0, Math.min(windowWidth, target.x));
+			target.y = Math.max(0, Math.min(windowHeight, target.y));
+
+			// Apply force toward the drift target
+			const dx = target.x - body.position.x;
+			const dy = target.y - body.position.y;
+			Body.applyForce(body, body.position, { x: dx * driftForce, y: dy * driftForce });
 
 			const { x, y } = body.position;
 			const angle = body.angle;
@@ -79,7 +97,7 @@
 
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
-	let bodyScale = $derived(-60 + Math.sqrt(windowWidth / 390) * 230);
+	let bodyScale = $derived(-60 + Math.sqrt(windowWidth / 390) * 220);
 
 	let walls: Walls;
 	let box: Box;
@@ -179,11 +197,11 @@
 				)
 			);
 
-			Matter.Body.applyForce(
-				body,
-				forcePosition,
-				Matter.Vector.create(force * dir * scale, force * dir * scale)
-			);
+			// Matter.Body.applyForce(
+			// 	body,
+			// 	forcePosition,
+			// 	Matter.Vector.create(force * dir * scale, force * dir * scale)
+			// );
 
 			body.frictionAir = 0.02;
 			Composite.add(world, body);
@@ -202,21 +220,48 @@
 		});
 
 		// pick a good position for the DEEP and SOUP letters
-		let xPosition = Math.random() * (windowWidth - deepWidth);
+		let xPosition = Math.max(0, Math.random() * (windowWidth - deepWidth));
 		letterBodies.forEach((body, i) => {
 			const angle = -Math.PI * 0.4 + Math.random() * Math.PI * 0.8;
 			Matter.Body.setAngle(body, angle);
 			Matter.Body.update(body, 0, 0, 0);
 
-			const offset = 0.25;
+			const index = i % 4;
+
+			const offset = 0.25 - 0.08 + (index % 2) * 0.04;
 			const y = i > 3 ? windowHeight - windowHeight * offset : windowHeight * offset;
-			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
+			let bodyWidth = body.bounds.max.x - body.bounds.min.x;
 
 			if (xPosition - bodyWidth / 2 < 0) xPosition = bodyWidth / 2;
 			if (i !== 0 && i !== 4) xPosition += bodyWidth * 0;
-			Body.setPosition(body, { x: xPosition, y });
+
+			const wordWidth = i < 3 ? deepWidth : soupWidth;
+			const availableSpace = windowWidth - wordWidth;
+
+			const marginLeft = 0.05 * windowWidth;
+			Body.setPosition(body, {
+				x:
+					availableSpace < 0
+						? marginLeft + bodyWidth / 2 + index * ((windowWidth * 0.9) / 4)
+						: xPosition,
+				y
+			});
+
 			xPosition += bodyWidth;
 			if (i === 3) xPosition = Math.random() * (windowWidth - soupWidth);
+		});
+
+		letterBodies.forEach((body, i) => {
+			// Initialize drift target near the body
+			body.plugin = body.plugin || {};
+			body.plugin.driftTarget = {
+				// x: Math.random() * windowWidth,
+				// y: Math.random() * windowHeight,
+				x: body.position.x + (Math.random() - 0.5) * 200,
+				y: body.position.y + (Math.random() - 0.5) * 300,
+
+				wanderRadius: 30 // how far the target can move per update
+			};
 		});
 
 		const boxSize = get(boxState);
