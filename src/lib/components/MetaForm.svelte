@@ -1,4 +1,6 @@
 <script lang="ts">
+	import DashedBox from './DashedBox.svelte';
+
 	let {
 		video,
 		onError
@@ -84,7 +86,11 @@
 		<div class="mb-8">Upload complete!<br />For credits and viewing info we just need your...</div>
 		<div class="input-container">
 			<label for="name" class="">Name</label>
-			<input id="name" type="text" bind:value={formData.name} required class="grow" />
+			<div class="relative flex flex-1">
+				<DashedBox class="grow">
+					<input id="name" type="text" bind:value={formData.name} required />
+				</DashedBox>
+			</div>
 		</div>
 
 		<div class="input-container">
