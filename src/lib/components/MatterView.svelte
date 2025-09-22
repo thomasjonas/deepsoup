@@ -199,19 +199,21 @@
 
 			svgs[i].style.height = `${bodyScale}px`;
 			svgs[i].style.opacity = '1';
-
-			Matter.Body.setAngle(body, (Math.random() * Math.PI) / 2);
 		});
 
 		// pick a good position for the DEEP and SOUP letters
 		let xPosition = Math.random() * (windowWidth - deepWidth);
 		letterBodies.forEach((body, i) => {
+			const angle = -Math.PI * 0.4 + Math.random() * Math.PI * 0.8;
+			Matter.Body.setAngle(body, angle);
+			Matter.Body.update(body, 0, 0, 0);
+
 			const offset = 0.25;
 			const y = i > 3 ? windowHeight - windowHeight * offset : windowHeight * offset;
 			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
 
-			if (xPosition < 0) xPosition = 0;
-			if (i !== 0 && i !== 4) xPosition += bodyWidth * 0.05;
+			if (xPosition - bodyWidth / 2 < 0) xPosition = bodyWidth / 2;
+			if (i !== 0 && i !== 4) xPosition += bodyWidth * 0;
 			Body.setPosition(body, { x: xPosition, y });
 			xPosition += bodyWidth;
 			if (i === 3) xPosition = Math.random() * (windowWidth - soupWidth);
