@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { RectangleLayout } from '$lib/rectangle-layout.svelte';
+	import { topState } from '$lib/state.svelte';
 	import { onDestroy } from 'svelte';
 	import Marquee from 'svelte-fast-marquee';
 
@@ -22,10 +23,17 @@
 		width: 0,
 		height: 0
 	});
+
 	$effect(() => {
 		const { width, height } = rectSize;
-
-		RectangleLayout.addExclusion({ id: 'top', x: 0, y: 0, w: width, h: height });
+		topState.set({ x: 0, y: 0, width, height });
+		RectangleLayout.addExclusion({
+			id: 'top',
+			x: 0,
+			y: 0,
+			w: width,
+			h: height
+		});
 	});
 </script>
 

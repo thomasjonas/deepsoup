@@ -20,30 +20,6 @@
 		  }
 		| undefined = $state();
 
-	let boxElement: HTMLDivElement;
-	onMount(() => {
-		const onChangeHandler = () => {
-			const rect = boxElement.getBoundingClientRect();
-			updateBoxState(rect);
-		};
-
-		const resizeObserver = new ResizeObserver((entries) => {
-			for (const entry of entries) {
-				if (entry.borderBoxSize) {
-					onChangeHandler();
-				}
-			}
-		});
-
-		window.addEventListener('resize', onChangeHandler);
-		resizeObserver.observe(boxElement);
-
-		return () => {
-			window.removeEventListener('resize', onChangeHandler);
-			resizeObserver.unobserve(boxElement);
-		};
-	});
-
 	let boxClasses = $derived.by(() => {
 		if (video)
 			return 'px-4 py-4 top-1/2 left-1/2 w-[calc(100vw-30px)] -translate-x-1/2 -translate-y-1/2 md:px-12 md:py-6 lg:w-[700px]';

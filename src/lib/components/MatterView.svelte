@@ -1,14 +1,17 @@
 <script lang="ts">
 	import Matter from 'matter-js';
+	// import { quickDecomp } from 'poly-decomp-es';
+	import decomp from 'poly-decomp';
 	import { onMount } from 'svelte';
-	import { quickDecomp } from 'poly-decomp-es';
 
 	import 'pathseg';
+	import { Box } from '$lib/matter/Box';
 	import { loadLetters } from '$lib/matter/utils';
 	import { Walls } from '$lib/matter/Walls';
-	import { Box } from '$lib/matter/Box';
-	import { appState, boxState } from '$lib/state.svelte';
+	import { appState, boxState, topState } from '$lib/state.svelte';
 	import { shuffle } from 'lodash-es';
+	import 'pathseg';
+	import { get } from 'svelte/store';
 
 	const DEBUG = false;
 
@@ -27,7 +30,7 @@
 		Events = Matter.Events;
 
 	// provide concave decomposition support library
-	Common.setDecomp(quickDecomp);
+	Common.setDecomp(decomp);
 
 	function setBodySize(body: Matter.Body, targetHeight: number) {
 		const currentHeight = body.bounds.max.y - body.bounds.min.y;
@@ -90,6 +93,21 @@
 		});
 	});
 
+	function updateBoxSize(newSize: { x: number; y: number; width: number; height: number }) {
+		box?.update(
+			newSize.x + newSize.width / 2,
+			newSize.y + newSize.height / 2,
+			newSize.width,
+			newSize.height
+		);
+	}
+	function updateTopSize(newSize: { x: number; y: number; width: number; height: number }) {
+		let h = windowHeight;
+		h -= newSize.height;
+		wallHeight = h;
+		wallTop = newSize.height;
+	}
+
 	onMount(async () => {
 		render = Render.create({
 			element: canvasContainer,
@@ -114,7 +132,11 @@
 		});
 		Runner.run(runner, engine);
 
-		walls = new Walls({ width: windowWidth, height: windowHeight });
+		walls = new Walls({
+			width: windowWidth,
+			height: windowHeight,
+			positionTop: get(topState).height
+		});
 		Composite.add(world, walls.getBodies());
 
 		const letters = await loadLetters();
@@ -142,12 +164,14 @@
 			if (i < 4) deepWidth += w;
 			if (i > 3) soupWidth += w;
 
+			// body.angle = Math.random() * Math.PI;
+			// Matter.Body.setAngle(body, (Math.random() * Math.PI) / 2);
+
 			const force = 0.02 + Math.random() * 0.0005;
 			const dir = Math.random() > 0.5 ? -2 : 2;
 			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
 			const bodyHeight = body.bounds.max.y - body.bounds.min.y;
 			const bodySize = Math.max(bodyWidth, bodyHeight);
-			console.log(bodySize);
 			const scale = (bodySize / 300) * Math.sqrt(windowWidth / 390) * 500000;
 
 			const forcePosition = Vector.add(
@@ -194,12 +218,13 @@
 			if (i === 3) xPosition = Math.random() * (windowWidth - soupWidth);
 		});
 
+		const boxSize = get(boxState);
 		box = new Box({
 			world,
-			x: boxState.x + boxState.width / 2,
-			y: boxState.y + boxState.height / 2,
-			width: boxState.width,
-			height: boxState.height
+			x: boxSize.x + boxSize.width / 2,
+			y: boxSize.y + boxSize.height / 2,
+			width: boxSize.width,
+			height: boxSize.height
 		});
 
 		// add mouse control
@@ -224,24 +249,22 @@
 			min: { x: 0, y: 0 },
 			max: { x: windowWidth, y: windowHeight }
 		});
+
+		const unsubBox = boxState.subscribe(updateBoxSize);
+		const unsubTop = topState.subscribe(updateTopSize);
+		return () => {
+			unsubBox();
+			unsubTop();
+		};
 	});
 
+	let wallHeight = $state(0);
+	let wallTop = $state(0);
 	$effect(() => {
 		if (!render) return;
 		// set the render size to equal window size
 		Render.setSize(render, windowWidth, windowHeight);
-		walls.setSize(windowWidth, windowHeight);
-	});
-
-	$effect(() => {
-		if (boxState.width && boxState.x && boxState.height && boxState.y) {
-			box?.update(
-				boxState.x + boxState.width / 2,
-				boxState.y + boxState.height / 2,
-				boxState.width,
-				boxState.height
-			);
-		}
+		walls.setSize(windowWidth, wallHeight, wallTop);
 	});
 
 	const WORD = 'DEEPSOUP';

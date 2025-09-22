@@ -1,7 +1,16 @@
+import { writable } from 'svelte/store';
 import { RectangleLayout } from './rectangle-layout.svelte';
 
 export let appContent: Record<string, string> = $state({});
-export const boxState: { x: number; y: number; width: number; height: number } = $state({
+
+export const topState = writable<{ x: number; y: number; width: number; height: number }>({
+	x: 0,
+	y: 0,
+	width: 0,
+	height: 0
+});
+
+export const boxState = writable<{ x: number; y: number; width: number; height: number }>({
 	x: 0,
 	y: 0,
 	width: 0,
@@ -14,11 +23,7 @@ export const updateBoxState = (newState: {
 	width: number;
 	height: number;
 }) => {
-	boxState.x = newState.x;
-	boxState.y = newState.y;
-	boxState.width = newState.width;
-	boxState.height = newState.height;
-
+	boxState.set({ x: newState.x, y: newState.y, width: newState.width, height: newState.height });
 	RectangleLayout.addExclusion({
 		id: 'box',
 		x: newState.x,
@@ -28,7 +33,11 @@ export const updateBoxState = (newState: {
 	});
 };
 
-export let appState = $state({
+const initialState = {
 	showLetters: true,
-	finishedDescriptions: false
-});
+	finishedDescriptions: false,
+	state: 'initial' as 'initial' | 'uploading'
+};
+
+export type AppState = typeof initialState;
+export let appState: AppState = $state(initialState);

@@ -59,5 +59,9 @@ class RectangleLayoutClass {
 		this.containerHeight = height;
 		// this.placeRectangles();
 	}
+
+	public getExclusions() {
+		return this.exclusions;
+	}
 }
 export const RectangleLayout = new RectangleLayoutClass();
