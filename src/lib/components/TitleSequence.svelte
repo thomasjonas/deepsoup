@@ -2,7 +2,6 @@
 	import { page } from '$app/state';
 	import { RectangleLayout } from '$lib/rectangle-layout.svelte';
 	import { topState } from '$lib/state.svelte';
-	import { onDestroy } from 'svelte';
 	import Marquee from 'svelte-fast-marquee';
 
 	const texts = [
@@ -38,7 +37,7 @@
 </script>
 
 <div
-	class="ui-text lg pointer-events-none flex w-screen items-start px-3.5 pt-2.5 pb-4 leading-tight lg:px-4 lg:pt-4"
+	class="ui-text lg pointer-events-none flex w-screen items-start px-3.5 pt-2.5 pb-3 leading-tight lg:px-4 lg:pt-4 lg:pb-4"
 	bind:clientWidth={rectSize.width}
 	bind:clientHeight={rectSize.height}
 >
@@ -55,11 +54,9 @@
 		</div>
 	</h1>
 
-	{#if page.url.pathname !== '/info'}
-		<a
-			href="/info"
-			class=" pointer-events-auto shrink-0 underline decoration-2 underline-offset-3 lg:decoration-3 lg:underline-offset-4"
-			>Info</a
-		>
-	{/if}
+	<a
+		href={page.url.pathname === '/info' ? '/' : '/info'}
+		class=" pointer-events-auto shrink-0 underline decoration-2 underline-offset-3 lg:decoration-3 lg:underline-offset-4"
+		>{page.url.pathname === '/info' ? 'Close' : 'Info'}</a
+	>
 </div>

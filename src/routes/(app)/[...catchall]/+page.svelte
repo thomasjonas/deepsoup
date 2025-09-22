@@ -46,7 +46,7 @@
 	/>
 {/if}
 
-<div class=" pointer-events-none absolute z-50 flex min-h-screen w-screen flex-col">
+<div class=" pointer-events-none absolute z-50 flex min-h-[100svh] w-screen flex-col">
 	<TitleSequence />
 
 	<div
