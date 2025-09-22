@@ -60,6 +60,7 @@
 						ease: 'in(3)',
 						delay: () => Math.random() * 1000,
 						onComplete: () => {
+							onComplete();
 							RectangleLayout.removeRectangle(`description-${index}`);
 						}
 					});

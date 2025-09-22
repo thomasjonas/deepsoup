@@ -5,7 +5,6 @@
 
 	let descriptions = $derived.by(() => {
 		const items = description.match(/^- .+/gm);
-		console.log(description, items);
 		if (!items) return [];
 		return items.map((i) => i.replace('- ', '').trim());
 	});
