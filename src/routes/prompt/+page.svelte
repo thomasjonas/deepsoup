@@ -109,11 +109,9 @@ Use the following format:
 			const duration = videoPreview.duration;
 			const timestamps = [
 				duration * 0.1, // 10%
-				duration * 0.2, // 10%
 				duration * 0.3, // 30%
-				duration * 0.5, // 10%
-				duration * 0.6, // 60%
-				duration * 0.75, // 60%
+				duration * 0.5, // 50%
+				duration * 0.7, // 70%
 				duration * 0.9 // 90%
 			];
 
@@ -121,12 +119,25 @@ Use the following format:
 				await new Promise<void>((resolve) => {
 					videoPreview.currentTime = timestamp;
 					videoPreview.onseeked = () => {
-						// Set canvas size to video dimensions
-						canvas.width = videoPreview.videoWidth;
-						canvas.height = videoPreview.videoHeight;
+						let width = videoPreview.videoWidth;
+						let height = videoPreview.videoHeight;
 
-						// Draw video frame to canvas
-						ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+						// Max size
+						const MAX_SIZE = 2048;
+
+						// Scale down if necessary
+						if (width > MAX_SIZE || height > MAX_SIZE) {
+							const scale = Math.min(MAX_SIZE / width, MAX_SIZE / height);
+							width = Math.floor(width * scale);
+							height = Math.floor(height * scale);
+						}
+
+						// Set canvas size
+						canvas.width = width;
+						canvas.height = height;
+
+						// Draw video frame to canvas with scaling
+						ctx.drawImage(videoPreview, 0, 0, width, height);
 
 						// Convert to base64 image
 						const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
