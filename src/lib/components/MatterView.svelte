@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Matter from 'matter-js';
-	// import { quickDecomp } from 'poly-decomp-es';
 	import decomp from 'poly-decomp';
 	import { onMount } from 'svelte';
 
@@ -165,9 +164,6 @@
 			if (i < 4) deepWidth += w;
 			if (i > 3) soupWidth += w;
 
-			// body.angle = Math.random() * Math.PI;
-			// Matter.Body.setAngle(body, (Math.random() * Math.PI) / 2);
-
 			const force = 0.02 + Math.random() * 0.0005;
 			const dir = Math.random() > 0.5 ? -2 : 2;
 			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
@@ -203,6 +199,8 @@
 
 			svgs[i].style.height = `${bodyScale}px`;
 			svgs[i].style.opacity = '1';
+
+			Matter.Body.setAngle(body, (Math.random() * Math.PI) / 2);
 		});
 
 		// pick a good position for the DEEP and SOUP letters
