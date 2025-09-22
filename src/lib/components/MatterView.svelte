@@ -44,7 +44,7 @@
 	// const gravityRadius = 0.01;
 	// const gravitySpeed = 0.0001;
 	Events.on(engine, 'afterUpdate', (event) => {
-		const driftForce = 0.05; // smaller = smoother drift
+		const driftForce = -0.03 * Math.sqrt(windowWidth / 390) * 2; // smaller = smoother drift
 		const wanderSpeed = 20; // how fast the target moves
 
 		letterBodies.forEach((body, i) => {
