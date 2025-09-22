@@ -11,6 +11,7 @@
 	let colophonContent = $state(data.content?.colophon.content);
 	let screeningDatesContent = $state(data.content?.screening_dates.content);
 	let promptContent = $state(data.content?.prompt.content);
+	let topbarContent = $state(data.content?.topbar.content);
 	let isSubmitting = $state(false);
 	let activeForm = $state<string | null>(null);
 
@@ -27,6 +28,7 @@
 				if (key === 'screening_dates') screeningDatesContent = result.data.content;
 				if (key === 'prompt') promptContent = result.data.content;
 				if (key === 'colophon') colophonContent = result.data.content;
+				if (key === 'topbar') topbarContent = result.data.content;
 			};
 		};
 	}
@@ -115,7 +117,7 @@
 	</Card>
 
 	<!-- Screening Dates Content -->
-	<Card class="p-6" size="lg">
+	<!-- <Card class="p-6" size="lg">
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
 				<div>
@@ -156,6 +158,50 @@
 							Saving...
 						{:else}
 							Save Screening Dates
+						{/if}
+					</Button>
+				</div>
+			</form>
+		</div>
+	</Card> -->
+
+	<Card class="p-6" size="lg">
+		<div class="space-y-4">
+			<div class="flex items-center justify-between">
+				<div>
+					<h2 class="font-medium text-lg text-gray-900">Title ticker</h2>
+					<p class="text-sm text-gray-600">Information ticker in the top bar of the website.</p>
+				</div>
+				<div class="text-xs text-gray-500">
+					{formatLastUpdated(data.content!.topbar.updatedAt)}
+				</div>
+			</div>
+
+			<form
+				method="POST"
+				action="?/updateContent"
+				use:enhance={handleSubmit('topbar')}
+				class="space-y-4"
+			>
+				<input type="hidden" name="key" value="topbar" />
+
+				<div>
+					<Textarea
+						name="content"
+						bind:value={topbarContent}
+						rows={6}
+						placeholder="Enter title ticker content here..."
+						class="w-full"
+						required
+					/>
+				</div>
+
+				<div class="flex justify-end">
+					<Button type="submit" color="blue" disabled={isSubmitting && activeForm === 'topbar'}>
+						{#if isSubmitting && activeForm === 'topbar'}
+							Saving...
+						{:else}
+							Save Title Ticker
 						{/if}
 					</Button>
 				</div>

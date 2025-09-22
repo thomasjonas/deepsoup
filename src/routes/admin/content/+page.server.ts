@@ -36,6 +36,10 @@ export const load: PageServerLoad = async () => {
 			prompt: {
 				content: contentMap.prompt?.content || 'Prompt goes here',
 				updatedAt: contentMap.prompt?.updatedAt || null
+			},
+			topbar: {
+				content: contentMap.topbar?.content || 'Title ticker content goes here',
+				updatedAt: contentMap.topbar?.updatedAt || null
 			}
 		};
 
@@ -59,6 +63,10 @@ export const load: PageServerLoad = async () => {
 				prompt: {
 					content: 'Prompt goes here',
 					updatedAt: null
+				},
+				topbar: {
+					content: 'Title ticker content goes here',
+					updatedAt: null
 				}
 			}
 		};
@@ -77,7 +85,7 @@ export const actions: Actions = {
 			}
 
 			// Validate key
-			if (!['colophon', 'screening_dates', 'prompt'].includes(key)) {
+			if (!['colophon', 'screening_dates', 'prompt', 'topbar'].includes(key)) {
 				return fail(400, { error: 'Invalid content key' });
 			}
 

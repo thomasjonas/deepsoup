@@ -94,7 +94,7 @@ body {
 }
 
 .info-content a {
-	@apply underline;
+	@apply underline decoration-2 underline-offset-3;
 }
 
 .info-content > * + * {

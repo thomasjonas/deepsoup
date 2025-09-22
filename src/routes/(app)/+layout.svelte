@@ -12,6 +12,7 @@
 	$effect(() => {
 		appContent.colophon = data.colophon;
 		appContent.prompt = data.prompt;
+		appContent.topbar = data.topbar;
 	});
 </script>
 

@@ -1,22 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { RectangleLayout } from '$lib/rectangle-layout.svelte';
-	import { topState } from '$lib/state.svelte';
+	import { appContent, topState } from '$lib/state.svelte';
 	import Marquee from 'svelte-fast-marquee';
 
-	const texts = [
-		'DEEP SOUP the film',
-		'Witness the birth of a Physical AI Model',
-		'Starring: Hugo Hamlet',
-		'Camera: Jasper Wolf, Thomas Weber and you',
-		'Upcoming screening: 27 Nov 2025 IDFA Doclab',
-		'DEEP SOUP',
-		'You are the one to train it',
-		'DEEP SOUP',
-		'A non-human intelligence',
-		'DEEP SOUP',
-		'Boom! Bang! Frrrrrrriction'
-	];
+	let texts = $derived(appContent.topbar ? appContent.topbar.split('\n') : []);
 
 	let rectSize = $state({
 		width: 0,
@@ -43,14 +31,16 @@
 >
 	<h1 class="lg:-pl-8 -ml-3.5 min-w-0 flex-1 pr-4">
 		<div class="w-full overflow-hidden">
-			<Marquee play speed={texts.join('').length / 10}>
-				{#each texts as t}
-					<div class="pl-3.5 lg:pl-8">{t}</div>
-					<div
-						class=" top-[0.2em] right-0 -mr-1.5 ml-2 aspect-square h-[0.8em] rounded-full bg-black lg:-mr-6"
-					></div>
-				{/each}
-			</Marquee>
+			{#if texts.length > 0}
+				<Marquee play speed={texts.join('').length / 10}>
+					{#each texts as t}
+						<div class="pl-3.5 lg:pl-8">{t}</div>
+						<div
+							class=" top-[0.2em] right-0 -mr-1.5 ml-2 aspect-square h-[0.8em] rounded-full bg-black lg:-mr-6"
+						></div>
+					{/each}
+				</Marquee>
+			{/if}
 		</div>
 	</h1>
 
