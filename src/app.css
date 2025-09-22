@@ -109,6 +109,20 @@ body {
 	@apply min-w-0 rounded-full border-0 bg-transparent px-4 pt-2 pb-2.5 focus:ring-0 lg:px-5 lg:py-4 lg:text-[24px];
 }
 
+input[type='checkbox'] {
+	@apply cursor-pointer focus:border-0 focus:shadow-none focus:ring-0 focus:outline-0;
+
+	&:focus {
+		box-shadow: none !important ;
+	}
+}
+
+a:focus,
+button:focus,
+div:focus {
+	@apply shadow-none ring-0 outline-0;
+}
+
 .input-container [type='checkbox']:checked {
 	@apply bg-none text-black;
 }

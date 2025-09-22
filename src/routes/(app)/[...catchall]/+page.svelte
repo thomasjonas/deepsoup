@@ -29,6 +29,15 @@
 	let description: string | undefined = $state();
 	let isDraggedOver = $state(false);
 	let showBackgroundVideo = $derived(false);
+
+	function restart() {
+		showBackgroundVideo = false;
+		uploadError = '';
+		video = undefined;
+		appState.finishedDescriptions = false;
+		appState.showLetters = false;
+		description = undefined;
+	}
 </script>
 
 {#if description && !appState.finishedDescriptions}
@@ -86,7 +95,7 @@
 					onDragStateChange={(newSstate) => (isDraggedOver = newSstate)}
 				/>
 			{:else}
-				<MetaForm {video} onError={(message: string) => (uploadError = message)} />
+				<MetaForm {video} onError={(message: string) => (uploadError = message)} {restart} />
 			{/if}
 		</DashedBox>
 	</div>

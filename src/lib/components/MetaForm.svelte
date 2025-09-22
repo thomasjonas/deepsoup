@@ -3,7 +3,8 @@
 
 	let {
 		video,
-		onError
+		onError,
+		restart
 	}: {
 		video: {
 			filename: string;
@@ -13,6 +14,7 @@
 			description: string;
 		};
 		onError: (message: string) => void;
+		restart: (message: string) => void;
 	} = $props();
 
 	let isUploading = $state(false);
@@ -61,7 +63,6 @@
 
 			if (response.ok) {
 				uploadSuccess = true;
-				// resetForm();
 			} else {
 				const errorData = await response.json().catch(() => ({}));
 				onError(errorData.error || 'Upload failed. Please try again.');
@@ -77,9 +78,12 @@
 </script>
 
 {#if uploadSuccess}
-	<div class="text-left">
+	<div class="pointer-events-auto text-left">
 		<p class="mb-8">Thank you, your contribution has entered Deep Soup!</p>
 		<p>We reach out to you to witness the encounter with a non-human intelligence.</p>
+		<button type="button" class="my-4 underline decoration-2 underline-offset-3" onclick={restart}
+			>Restart</button
+		>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="pointer-events-auto text-left">
