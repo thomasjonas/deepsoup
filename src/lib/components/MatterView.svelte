@@ -5,7 +5,7 @@
 
 	import 'pathseg';
 	import { Box } from '$lib/matter/Box';
-	import { loadLetters } from '$lib/matter/utils';
+	import { loadLetters, relaxLayout } from '$lib/matter/utils';
 	import { Walls } from '$lib/matter/Walls';
 	import { appState, boxState, topState } from '$lib/state.svelte';
 	import { shuffle } from 'lodash-es';
@@ -97,7 +97,7 @@
 
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
-	let bodyScale = $derived(-60 + Math.sqrt(windowWidth / 390) * 220);
+	let bodyScale = $derived(-35 + Math.sqrt(windowWidth / 390) * 200);
 
 	let walls: Walls;
 	let box: Box;
@@ -197,11 +197,11 @@
 				)
 			);
 
-			// Matter.Body.applyForce(
-			// 	body,
-			// 	forcePosition,
-			// 	Matter.Vector.create(force * dir * scale, force * dir * scale)
-			// );
+			Matter.Body.applyForce(
+				body,
+				forcePosition,
+				Matter.Vector.create(force * dir * scale, force * dir * scale)
+			);
 
 			body.frictionAir = 0.02;
 			Composite.add(world, body);
@@ -213,10 +213,12 @@
 			body.render.sprite.xOffset = geometricCenterX - body.position.x;
 			body.render.sprite.yOffset = geometricCenterY - body.position.y;
 
+			const angle = -Math.PI * 0.4 + Math.random() * Math.PI * 0.8;
+			Matter.Body.setAngle(body, angle);
+
 			letterBodies.push(body);
 
 			svgs[i].style.height = `${bodyScale}px`;
-			svgs[i].style.opacity = '1';
 		});
 
 		// pick a good position for the DEEP and SOUP letters
@@ -235,13 +237,13 @@
 			if (xPosition - bodyWidth / 2 < 0) xPosition = bodyWidth / 2;
 			if (i !== 0 && i !== 4) xPosition += bodyWidth * 0;
 
-			const wordWidth = i < 3 ? deepWidth : soupWidth;
+			const wordWidth = i < 4 ? deepWidth : soupWidth;
 			const availableSpace = windowWidth - wordWidth;
 
 			const marginLeft = 0.05 * windowWidth;
 			Body.setPosition(body, {
 				x:
-					availableSpace < 0
+					availableSpace < windowWidth / 2
 						? marginLeft + bodyWidth / 2 + index * ((windowWidth * 0.9) / 4)
 						: xPosition,
 				y
@@ -274,16 +276,16 @@
 		});
 
 		// add mouse control
-		const mouse = Mouse.create(render.canvas),
-			mouseConstraint = MouseConstraint.create(engine, {
-				mouse: mouse,
-				constraint: {
-					stiffness: 0.2,
-					render: {
-						visible: false
-					}
+		const mouse = Mouse.create(render.canvas);
+		const mouseConstraint = MouseConstraint.create(engine, {
+			mouse: mouse,
+			constraint: {
+				stiffness: 0.2,
+				render: {
+					visible: false
 				}
-			});
+			}
+		});
 
 		Composite.add(world, mouseConstraint);
 
@@ -295,6 +297,20 @@
 			min: { x: 0, y: 0 },
 			max: { x: windowWidth, y: windowHeight }
 		});
+
+		setTimeout(() => {
+			relaxLayout(
+				letterBodies,
+				[...walls.getBodies(), box?.body].filter((b) => typeof b !== 'undefined'),
+				10000
+			);
+			const timings = shuffle(svgs.map((_, idx) => idx * 150 + Math.random() * 50));
+			svgs.forEach((svg, i) => {
+				setTimeout(() => {
+					svg.style.opacity = '1';
+				}, timings[i]);
+			});
+		}, 50);
 
 		const unsubBox = boxState.subscribe(updateBoxSize);
 		const unsubTop = topState.subscribe(updateTopSize);
@@ -320,7 +336,6 @@
 		if (!appState.showLetters) {
 			const timings = shuffle(svgs.map((_, idx) => idx * 250 + Math.random() * 150));
 			svgs.forEach((svg, i) => {
-				svg.style.transition = 'opacity 1000ms';
 				setTimeout(() => {
 					svg.style.opacity = '0';
 				}, timings[i]);
@@ -335,7 +350,7 @@
 	{#each WORD as c, i}
 		<img
 			alt={`Letter shape ${WORD[i]}`}
-			class="pointer-events-none absolute z-10 opacity-0"
+			class="pointer-events-none absolute z-10 opacity-0 transition-opacity duration-1000"
 			bind:this={svgs[i]}
 			src="/svgs/{c}.svg"
 		/>
