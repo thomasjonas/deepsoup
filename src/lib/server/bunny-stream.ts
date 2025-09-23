@@ -139,7 +139,7 @@ export async function getVideoInfo(videoId: string): Promise<BunnyStreamVideo | 
 // Get all videos from BunnyStream library
 export async function listVideos(): Promise<BunnyStreamVideo[]> {
 	try {
-		const response = await fetch(`${env.BUNNY_API_BASE}/library/${env.BUNNY_LIBRARY_ID}/videos`, {
+		const response = await fetch(`${BUNNY_API_BASE}/library/${env.BUNNY_LIBRARY_ID}/videos`, {
 			headers: {
 				AccessKey: env.BUNNY_API_KEY
 			}
