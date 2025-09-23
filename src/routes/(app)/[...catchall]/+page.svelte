@@ -38,6 +38,11 @@
 		appState.showLetters = false;
 		description = undefined;
 	}
+
+	function handleError(message: string) {
+		uploadError = message;
+		if (message.length > 0) alert(message);
+	}
 </script>
 
 {#if description && !appState.finishedDescriptions}
@@ -74,7 +79,7 @@
 		>
 			{#if !video}
 				<VideoUploader
-					onError={(message: string) => (uploadError = message)}
+					onError={handleError}
 					onSuccess={(result: {
 						id: string;
 						filename: string;
