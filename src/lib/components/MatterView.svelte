@@ -9,8 +9,8 @@
 	import { Walls } from '$lib/matter/Walls';
 	import { appState, boxState, topState } from '$lib/state.svelte';
 	import { shuffle } from 'lodash-es';
-	import 'pathseg';
 	import { get } from 'svelte/store';
+	import { createNoise2D } from 'simplex-noise';
 
 	const DEBUG = false;
 
@@ -38,33 +38,33 @@
 	}
 
 	// create engine
-	const engine = Engine.create(),
-		world = engine.world;
+	const engine = Engine.create();
+	const world = engine.world;
 
-	// const gravityRadius = 0.01;
-	// const gravitySpeed = 0.0001;
+	const noise = createNoise2D();
+
 	Events.on(engine, 'afterUpdate', (event) => {
-		const driftForce = -0.03 * Math.sqrt(windowWidth / 390) * 2; // smaller = smoother drift
-		const wanderSpeed = 20; // how fast the target moves
+		const driftStrength = -2 + Math.sqrt(ratio) * 8; // 10x stronger than before
+		const driftSpeed = 0.0001;
+
+		const t = Date.now() * driftSpeed; // time parameter for smooth variation
 
 		letterBodies.forEach((body, i) => {
 			const svg = svgs[i];
 			if (!svg) return;
 
-			const target = body.plugin.driftTarget;
+			// Smooth noise-based offsets
+			const nx = noise(i * 10, t); // -1 → 1
+			const ny = noise(i * 10 + 100, t); // offset for y axis
 
-			// Make the drift target wander a little
-			target.x += (Math.random() - 0.5) * target.wanderRadius * 0.01 * wanderSpeed;
-			target.y += (Math.random() - 0.5) * target.wanderRadius * 0.01 * wanderSpeed;
+			// Apply force scaled for visibility
+			Body.applyForce(body, body.position, {
+				x: nx * driftStrength,
+				y: ny * driftStrength
+			});
 
-			// Clamp the target to the screen bounds
-			target.x = Math.max(0, Math.min(windowWidth, target.x));
-			target.y = Math.max(0, Math.min(windowHeight, target.y));
-
-			// Apply force toward the drift target
-			const dx = target.x - body.position.x;
-			const dy = target.y - body.position.y;
-			Body.applyForce(body, body.position, { x: dx * driftForce, y: dy * driftForce });
+			// small angular drift
+			Body.setAngularVelocity(body, noise(i + 200, t) * 0.0008);
 
 			const { x, y } = body.position;
 			const angle = body.angle;
@@ -97,7 +97,9 @@
 
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
-	let bodyScale = $derived(-35 + Math.sqrt(windowWidth / 390) * 200);
+	let pixels = $derived(windowWidth * windowHeight);
+	let ratio = $derived(windowWidth / 390);
+	let bodyScale = $derived(-35 + Math.sqrt(ratio) * 200);
 
 	let walls: Walls;
 	let box: Box;
@@ -251,19 +253,6 @@
 
 			xPosition += bodyWidth;
 			if (i === 3) xPosition = Math.random() * (windowWidth - soupWidth);
-		});
-
-		letterBodies.forEach((body, i) => {
-			// Initialize drift target near the body
-			body.plugin = body.plugin || {};
-			body.plugin.driftTarget = {
-				// x: Math.random() * windowWidth,
-				// y: Math.random() * windowHeight,
-				x: body.position.x + (Math.random() - 0.5) * 200,
-				y: body.position.y + (Math.random() - 0.5) * 300,
-
-				wanderRadius: 30 // how far the target can move per update
-			};
 		});
 
 		const boxSize = get(boxState);
