@@ -97,17 +97,17 @@
 			cell: ({ row }) => {
 				return renderComponent(TableActions, {
 					downloadLink: `/download/${row.original.bunnyVideoId}?filename=${row.original.originalFilename}`,
-					onRemove: () => removeHandler(row.original.id)
+					onRemove: () => removeHandler(row.original)
 				});
 			}
 		}
 	];
 
-	async function removeHandler(videoId: number | string) {
-		const confirmation = confirm(`Are you sure you want to remove video ${videoId}?`);
+	async function removeHandler(video: Video) {
+		const confirmation = confirm(`Are you sure you want to remove video ${video.title}?`);
 		if (!confirmation) return;
 
-		await fetch(`/api/delete-video/${videoId}`, { method: 'DELETE' });
+		await fetch(`/api/delete-video/${video.id}`, { method: 'DELETE' });
 		await invalidateAll();
 	}
 </script>
@@ -132,5 +132,5 @@
 <VideoModal
 	video={selectedVideo}
 	onClose={() => (selectedVideo = undefined)}
-	onRemove={() => selectedVideo && removeHandler(selectedVideo?.id)}
+	onRemove={() => selectedVideo && removeHandler(selectedVideo)}
 />
