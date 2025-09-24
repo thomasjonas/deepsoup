@@ -47,7 +47,7 @@
 <div class="flex min-h-screen items-center justify-center bg-gray-50">
 	<div class="w-full max-w-md space-y-8">
 		<div>
-			<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Admin Login</h2>
+			<h2 class="font-extrabold mt-6 text-center text-3xl text-gray-900">Admin Login</h2>
 		</div>
 		<form class="mt-8 space-y-6" on:submit={handleSubmit}>
 			<div class="-space-y-px rounded-md shadow-sm">
@@ -91,7 +91,7 @@
 				<button
 					type="submit"
 					disabled={loading}
-					class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+					class="group font-medium relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 				>
 					{loading ? 'Signing in...' : 'Sign in'}
 				</button>
