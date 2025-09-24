@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Matter from 'matter-js';
 	import decomp from 'poly-decomp';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	import 'pathseg';
 	import { Box } from '$lib/matter/Box';
-	import { loadLetters, relaxLayout } from '$lib/matter/utils';
+	import { loadLetters, positionLetters, relaxLayout } from '$lib/matter/utils';
 	import { Walls } from '$lib/matter/Walls';
 	import { appState, boxState, topState } from '$lib/state.svelte';
 	import { shuffle } from 'lodash-es';
@@ -160,8 +160,6 @@
 		});
 
 		const letters = await loadLetters();
-		let deepWidth = 0;
-		let soupWidth = 0;
 		letters.forEach((letter, i) => {
 			const color = Common.choose(['#f19648', '#f5d259', '#f55a3c', '#063e7b', '#ececd1']);
 			const body = Bodies.fromVertices(
@@ -180,31 +178,6 @@
 			);
 			setBodySize(body, bodyScale);
 
-			const w = body.bounds.max.x - body.bounds.min.x;
-			if (i < 4) deepWidth += w;
-			if (i > 3) soupWidth += w;
-
-			const force = 0.02 + Math.random() * 0.0005;
-			const dir = Math.random() > 0.5 ? -2 : 2;
-			const bodyWidth = body.bounds.max.x - body.bounds.min.x;
-			const bodyHeight = body.bounds.max.y - body.bounds.min.y;
-			const bodySize = Math.max(bodyWidth, bodyHeight);
-			const scale = (bodySize / 300) * Math.sqrt(windowWidth / 390) * 500000;
-
-			const forcePosition = Vector.add(
-				body.position,
-				Vector.create(
-					-bodySize / 2 + Math.random() * bodySize,
-					-bodySize / 2 + Math.random() * bodySize
-				)
-			);
-
-			Matter.Body.applyForce(
-				body,
-				forcePosition,
-				Matter.Vector.create(force * dir * scale, force * dir * scale)
-			);
-
 			body.frictionAir = 0.02;
 			Composite.add(world, body);
 
@@ -220,40 +193,13 @@
 
 			letterBodies.push(body);
 
+			Matter.Body.setAngle(body, -Math.PI * 0.4 + Math.random() * Math.PI * 0.8);
+			Matter.Body.update(body, 0, 0, 0);
+
 			svgs[i].style.height = `${bodyScale}px`;
 		});
 
-		// pick a good position for the DEEP and SOUP letters
-		let xPosition = Math.max(0, Math.random() * (windowWidth - deepWidth));
-		letterBodies.forEach((body, i) => {
-			const angle = -Math.PI * 0.4 + Math.random() * Math.PI * 0.8;
-			Matter.Body.setAngle(body, angle);
-			Matter.Body.update(body, 0, 0, 0);
-
-			const index = i % 4;
-
-			const offset = 0.25 - 0.08 + (index % 2) * 0.04;
-			const y = i > 3 ? windowHeight - windowHeight * offset : windowHeight * offset;
-			let bodyWidth = body.bounds.max.x - body.bounds.min.x;
-
-			if (xPosition - bodyWidth / 2 < 0) xPosition = bodyWidth / 2;
-			if (i !== 0 && i !== 4) xPosition += bodyWidth * 0;
-
-			const wordWidth = i < 4 ? deepWidth : soupWidth;
-			const availableSpace = windowWidth - wordWidth;
-
-			const marginLeft = 0.05 * windowWidth;
-			Body.setPosition(body, {
-				x:
-					availableSpace < windowWidth / 2
-						? marginLeft + bodyWidth / 2 + index * ((windowWidth * 0.9) / 4)
-						: xPosition,
-				y
-			});
-
-			xPosition += bodyWidth;
-			if (i === 3) xPosition = Math.random() * (windowWidth - soupWidth);
-		});
+		positionLetters(letterBodies, windowWidth, windowHeight);
 
 		const boxSize = get(boxState);
 		box = new Box({
@@ -321,19 +267,35 @@
 	const WORD = 'DEEPSOUP';
 	let svgs: HTMLImageElement[] = $state([]);
 
+	async function repositionLetters() {
+		console.log('resposition letters');
+		positionLetters(letterBodies, windowWidth, windowHeight);
+		await tick();
+		relaxLayout(
+			letterBodies,
+			[...walls.getBodies(), box?.body].filter((b) => typeof b !== 'undefined'),
+			10000
+		);
+	}
+
 	$effect(() => {
-		if (!appState.showLetters) {
-			const timings = shuffle(svgs.map((_, idx) => idx * 250 + Math.random() * 150));
-			svgs.forEach((svg, i) => {
-				setTimeout(() => {
-					svg.style.opacity = '0';
-				}, timings[i]);
-			});
-		}
+		let opacity = appState.showLetters ? '1' : '0';
+		if (appState.showLetters) repositionLetters();
+
+		const timings = shuffle(svgs.map((_, idx) => idx * 250 + Math.random() * 150));
+		svgs.forEach((svg, i) => {
+			setTimeout(() => {
+				svg.style.opacity = opacity;
+			}, timings[i]);
+		});
 	});
 </script>
 
-<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
+<svelte:window
+	bind:innerWidth={windowWidth}
+	bind:innerHeight={windowHeight}
+	onkeydown={() => repositionLetters()}
+/>
 
 <div class="fixed top-0 left-0 z-0 h-full w-screen overflow-hidden" bind:this={canvasContainer}>
 	{#each WORD as c, i}

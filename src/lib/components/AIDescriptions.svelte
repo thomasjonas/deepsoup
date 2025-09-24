@@ -1,10 +1,11 @@
 <script lang="ts">
 	import AiDescription from './AIDescription.svelte';
 
-	let { description, onComplete }: { description: string; onComplete: () => void } = $props();
+	let { description = $bindable(), onComplete }: { description?: string; onComplete: () => void } =
+		$props();
 
 	let descriptions = $derived.by(() => {
-		const items = description.match(/^- .+/gm);
+		const items = description?.match(/^- .+/gm);
 		if (!items) return [];
 		return items.map((i) => i.replace('- ', '').trim());
 	});
@@ -14,6 +15,10 @@
 		completed++;
 		if (completed >= descriptions.length) onComplete();
 	}
+
+	$effect(() => {
+		if (descriptions.length === 0) onComplete();
+	});
 </script>
 
 <div class="pointer-events-none fixed inset-0">

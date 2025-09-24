@@ -110,3 +110,45 @@ export function relaxLayout(
 		if (!moved) break; // early exit when stable
 	}
 }
+
+export function positionLetters(
+	letterBodies: Matter.Body[],
+	windowWidth: number,
+	windowHeight: number
+) {
+	let soupWidth = 0;
+	let deepWidth = 0;
+	letterBodies.forEach((body, i) => {
+		const w = body.bounds.max.x - body.bounds.min.x;
+		if (i < 4) deepWidth += w;
+		if (i > 3) soupWidth += w;
+	});
+
+	// pick a good position for the DEEP and SOUP letters
+	let xPosition = Math.max(0, Math.random() * (windowWidth - deepWidth));
+	letterBodies.forEach((body, i) => {
+		const index = i % 4;
+
+		const offset = 0.25 - 0.08 + (index % 2) * 0.04;
+		const y = i > 3 ? windowHeight - windowHeight * offset : windowHeight * offset;
+		let bodyWidth = body.bounds.max.x - body.bounds.min.x;
+
+		if (xPosition - bodyWidth / 2 < 0) xPosition = bodyWidth / 2;
+		if (index === 0) xPosition += bodyWidth * 0;
+
+		const wordWidth = i < 4 ? deepWidth : soupWidth;
+		const availableSpace = windowWidth - wordWidth;
+
+		const marginLeft = 0.05 * windowWidth;
+		Matter.Body.setPosition(body, {
+			x:
+				availableSpace < windowWidth / 2
+					? marginLeft + bodyWidth / 2 + index * ((windowWidth * 0.9) / 4)
+					: xPosition,
+			y
+		});
+
+		xPosition += bodyWidth;
+		if (i === 3) xPosition = Math.random() * (windowWidth - soupWidth);
+	});
+}

@@ -28,14 +28,14 @@
 
 	let description: string | undefined = $state();
 	let isDraggedOver = $state(false);
-	let showBackgroundVideo = $derived(false);
+	let showBackgroundVideo = $state(false);
 
 	function restart() {
 		showBackgroundVideo = false;
 		uploadError = '';
 		video = undefined;
 		appState.finishedDescriptions = false;
-		appState.showLetters = false;
+		appState.showLetters = true;
 		description = undefined;
 	}
 
@@ -49,8 +49,7 @@
 	<AiDescriptions
 		{description}
 		onComplete={() => {
-			console.log('finished descriptions');
-			showBackgroundVideo = false;
+			if (description !== 'DESCRIPTION_ERROR') showBackgroundVideo = false;
 			setTimeout(() => {
 				appState.finishedDescriptions = true;
 			}, 2000);
@@ -87,6 +86,7 @@
 						size: number;
 						description: string;
 					}) => {
+						if (description === 'DESCRIPTION_ERROR') showBackgroundVideo = false;
 						video = result;
 					}}
 					onDescription={(d: string) => {

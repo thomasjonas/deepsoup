@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { uploadToBunny } from '$lib/bunny-upload';
 	import { appState } from '$lib/state.svelte';
-	import { tick } from 'svelte';
+	import { onDestroy, tick } from 'svelte';
 
 	let {
 		onError,
@@ -61,11 +61,11 @@
 		});
 		if (!selectedFile || isAnalyzing || isUploading || !appState.finishedDescriptions) return;
 
-		// const timeDiff = (Date.now() - uploadStartTime) / 1000;
-		// if (timeDiff < 30) {
-		// 	setTimeout(checkSuccess, timeDiff * 1000);
-		// 	return;
-		// }
+		const timeDiff = (Date.now() - uploadStartTime) / 1000;
+		if (timeDiff < 30) {
+			setTimeout(checkSuccess, timeDiff * 1000);
+			return;
+		}
 
 		onSuccess({
 			id: videoId,
@@ -261,6 +261,7 @@
 					onDescription(result.description);
 				} else {
 					console.error('AI analysis failed:', result.error);
+					onDescription('DESCRIPTION_ERROR');
 				}
 			} else {
 				const error = await response.json();
@@ -270,6 +271,24 @@
 			console.error('Error calling AI analysis:', error);
 		}
 	}
+
+	function reset() {
+		selectedFile = null;
+		text = 'Uploading';
+		screenshots = [];
+		isUploading = false;
+		isAnalyzing = false;
+		duration = 0;
+		fileSize = 0;
+		description = '';
+		videoId = '';
+		uploadStartTime = Date.now();
+	}
+
+	onDestroy(() => {
+		console.log('destroyed video uploader');
+		reset();
+	});
 </script>
 
 <div
