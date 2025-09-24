@@ -16,6 +16,10 @@
 	});
 </script>
 
+<svelte:head>
+	<meta name="theme-color" content="#72B286" />
+</svelte:head>
+
 <div
 	class="fixed bottom-0 left-0 z-[101] w-screen overflow-y-scroll bg-green p-5 pt-2"
 	style="top: {top}px"
