@@ -269,7 +269,7 @@
 
 	async function repositionLetters() {
 		console.log('resposition letters');
-		positionLetters(letterBodies, windowWidth, windowHeight);
+		positionLetters(letterBodies, window.innerWidth, window.innerHeight);
 		await tick();
 		relaxLayout(
 			letterBodies,
@@ -279,9 +279,10 @@
 	}
 
 	$effect(() => {
-		let opacity = appState.showLetters ? '1' : '0';
-		if (appState.showLetters) repositionLetters();
+		const show = appState.showLetters;
+		if (show) repositionLetters();
 
+		const opacity = show ? '1' : '0';
 		const timings = shuffle(svgs.map((_, idx) => idx * 250 + Math.random() * 150));
 		svgs.forEach((svg, i) => {
 			setTimeout(() => {
@@ -291,11 +292,7 @@
 	});
 </script>
 
-<svelte:window
-	bind:innerWidth={windowWidth}
-	bind:innerHeight={windowHeight}
-	onkeydown={() => repositionLetters()}
-/>
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
 
 <div class="fixed top-0 left-0 z-0 h-full w-screen overflow-hidden" bind:this={canvasContainer}>
 	{#each WORD as c, i}
