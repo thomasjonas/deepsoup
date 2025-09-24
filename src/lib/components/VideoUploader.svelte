@@ -258,11 +258,9 @@
 				const result = await response.json();
 				if (result.success) {
 					description = result.description;
-					console.log('Got description', result.description);
 					onDescription(result.description);
 				} else {
 					console.error('AI analysis failed:', result.error);
-					alert(result.error);
 				}
 			} else {
 				const error = await response.json();

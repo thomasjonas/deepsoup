@@ -193,7 +193,6 @@ Use the following format:
 
 	// Handle form submission
 	async function handleSubmit() {
-		console.log('---');
 		if (!selectedFile || !formData.name || !formData.email) {
 			uploadError = 'Please fill in all required fields and select a video';
 			return;
@@ -209,7 +208,6 @@ Use the following format:
 		uploadError = '';
 
 		try {
-			console.log('---');
 			// Create form data for upload
 			const uploadFormData = new FormData();
 			uploadFormData.append('video', selectedFile);

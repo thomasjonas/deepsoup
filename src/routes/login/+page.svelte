@@ -20,8 +20,6 @@
 				// callbackURL: $page.url.searchParams.get('redirectTo') || '/admin'
 			});
 
-			console.log($page.url.searchParams.get('redirectTo') || '/admin');
-
 			if (data && data.user) {
 				// Redirect to admin or the page they were trying to access
 				const redirectTo = $page.url.searchParams.get('redirectTo') || '/admin';

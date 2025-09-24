@@ -15,8 +15,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			prompt = prompts.pop().content;
 		}
 
-		console.log({ prompt });
-
 		if (!prompt) {
 			return json(
 				{

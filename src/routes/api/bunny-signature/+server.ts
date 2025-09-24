@@ -8,7 +8,6 @@ export const POST: RequestHandler = async ({ request }) => {
 	// e.g. { filename, filetype, maybe collection etc. }
 
 	const videoCreated = await createVideo(body.filename);
-	console.log({ videoCreated });
 	// createBunnyVideo calls Bunny’s REST API “Create Video” to get a videoId etc.
 	const videoId = videoCreated.guid;
 

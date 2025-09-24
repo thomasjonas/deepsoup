@@ -30,11 +30,6 @@
 		if (!selectedVideo && page.url.hash.startsWith('#video-')) window.location.hash = '';
 	});
 
-	// function onSelectRow(rowIndex: number, event: Event, dataTable: DataTable) {
-	// 	goto(`#video-${dataTable.data.data[rowIndex].cells[0].text}`);
-	// 	console.log();
-	// }
-
 	const columns: ColumnDef<Video>[] = [
 		{
 			accessorKey: 'bunnyVideoId',
@@ -50,20 +45,6 @@
 				),
 			enableSorting: false
 		},
-		// {
-		// 	accessorKey: ,
-		// 	header: 'Thumbnail',
-		// 	cell: ({ row }) =>
-		// 		renderSnippet(
-		// 			createRawSnippet<[string]>(() => {
-		// 				return {
-		// 					render: () =>
-		// 						`<img class="aspect-square object-contain h-16 w-auto" src="https://${PUBLIC_BUNNY_STORAGE_ZONE_NAME}.b-cdn.net/${row.original.bunnyVideoId}/thumbnail.jpg" />`
-		// 				};
-		// 			})
-		// 		),
-		// 	enableSorting: false
-		// },
 		{
 			accessorKey: 'originalFilename',
 			header: (ctx) => headerComponent('Filename', ctx)
