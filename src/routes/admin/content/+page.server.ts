@@ -40,6 +40,10 @@ export const load: PageServerLoad = async () => {
 			topbar: {
 				content: contentMap.topbar?.content || 'Title ticker content goes here',
 				updatedAt: contentMap.topbar?.updatedAt || null
+			},
+			terms: {
+				content: contentMap.terms?.content || 'Terms and conditions go here',
+				updatedAt: contentMap.terms?.updatedAt || null
 			}
 		};
 
@@ -67,6 +71,10 @@ export const load: PageServerLoad = async () => {
 				topbar: {
 					content: 'Title ticker content goes here',
 					updatedAt: null
+				},
+				terms: {
+					content: 'Terms and conditions go here',
+					updatedAt: null
 				}
 			}
 		};
@@ -85,7 +93,7 @@ export const actions: Actions = {
 			}
 
 			// Validate key
-			if (!['colophon', 'screening_dates', 'prompt', 'topbar'].includes(key)) {
+			if (!['colophon', 'screening_dates', 'prompt', 'topbar', 'terms'].includes(key)) {
 				return fail(400, { error: 'Invalid content key' });
 			}
 

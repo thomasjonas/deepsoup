@@ -92,7 +92,7 @@
 			<label for="name" class="">Name</label>
 			<div class="relative flex flex-1">
 				<DashedBox class="grow" fullyRounded>
-					<input id="name" class="w-full" type="text" bind:value={formData.name} required />
+					<input id="name" class="w-full" type="text" bind:value={formData.name} />
 				</DashedBox>
 			</div>
 		</div>
@@ -100,21 +100,23 @@
 		<div class="input-container">
 			<label for="email" class="">Email</label>
 			<DashedBox class="grow" fullyRounded>
-				<input id="email" class="w-full" type="email" bind:value={formData.email} required />
+				<input id="email" class="w-full" type="email" bind:value={formData.email} />
 			</DashedBox>
 		</div>
 
 		<div class="input-container">
 			<label for="instagram" class=""> Instagram </label>
 			<DashedBox class="shrink grow" fullyRounded>
-				<input id="instagram" type="text" bind:value={formData.instagramHandle} class=" w-full" />
+				<input id="instagram" type="text" bind:value={formData.instagramHandle} class="w-full" />
 			</DashedBox>
 		</div>
 
 		<div class="input-container justify-between">
 			<label for="terms_conditions" class="">
-				I agree with <a href="#" class="underline decoration-2 underline-offset-3"
-					>terms and conditions</a
+				I agree with <a
+					href="/terms-and-conditions"
+					target="_blank"
+					class="underline decoration-2 underline-offset-3">terms and conditions</a
 				></label
 			>
 			<DashedBox fullyRounded>

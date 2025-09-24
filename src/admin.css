@@ -37,6 +37,10 @@
 	text-underline-offset: 2px;
 }
 
+.tiptap p + p {
+	@apply mt-[1em];
+}
+
 /* blockquote */
 .tiptap blockquote {
 	border-left: 3px solid var(--gray-3);

@@ -12,6 +12,7 @@
 	let screeningDatesContent = $state(data.content?.screening_dates.content);
 	let promptContent = $state(data.content?.prompt.content);
 	let topbarContent = $state(data.content?.topbar.content);
+	let termsContent = $state(data.content?.terms.content);
 	let isSubmitting = $state(false);
 	let activeForm = $state<string | null>(null);
 
@@ -116,55 +117,6 @@
 		</div>
 	</Card>
 
-	<!-- Screening Dates Content -->
-	<!-- <Card class="p-6" size="lg">
-		<div class="space-y-4">
-			<div class="flex items-center justify-between">
-				<div>
-					<h2 class="font-medium text-lg text-gray-900">Screening Dates</h2>
-					<p class="text-sm text-gray-600">Information about upcoming screening events</p>
-				</div>
-				<div class="text-xs text-gray-500">
-					{formatLastUpdated(data.content!.screening_dates.updatedAt)}
-				</div>
-			</div>
-
-			<form
-				method="POST"
-				action="?/updateContent"
-				use:enhance={handleSubmit('screening_dates')}
-				class="space-y-4"
-			>
-				<input type="hidden" name="key" value="screening_dates" />
-
-				<div>
-					<Textarea
-						name="content"
-						bind:value={screeningDatesContent}
-						rows={6}
-						placeholder="Enter screening dates and information here..."
-						class="w-full"
-						required
-					/>
-				</div>
-
-				<div class="flex justify-end">
-					<Button
-						type="submit"
-						color="blue"
-						disabled={isSubmitting && activeForm === 'screening_dates'}
-					>
-						{#if isSubmitting && activeForm === 'screening_dates'}
-							Saving...
-						{:else}
-							Save Screening Dates
-						{/if}
-					</Button>
-				</div>
-			</form>
-		</div>
-	</Card> -->
-
 	<Card class="p-6" size="lg">
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
@@ -246,6 +198,43 @@
 							Saving...
 						{:else}
 							Save Prompt
+						{/if}
+					</Button>
+				</div>
+			</form>
+		</div>
+	</Card>
+
+	<Card class="p-6" size="lg">
+		<div class="space-y-4">
+			<div class="flex items-center justify-between">
+				<div>
+					<h2 class="font-medium text-lg text-gray-900">Terms and conditions</h2>
+				</div>
+				<div class="text-xs text-gray-500">
+					{formatLastUpdated(data.content!.terms.updatedAt)}
+				</div>
+			</div>
+
+			<form
+				method="POST"
+				action="?/updateContent"
+				use:enhance={handleSubmit('terms')}
+				class="space-y-4"
+			>
+				<input type="hidden" name="key" value="terms" />
+
+				<div>
+					<input type="hidden" name="content" bind:value={termsContent} required />
+					<Wysiwyg bind:value={termsContent} />
+				</div>
+
+				<div class="flex justify-end">
+					<Button type="submit" color="blue" disabled={isSubmitting && activeForm === 'terms'}>
+						{#if isSubmitting && activeForm === 'terms'}
+							Saving...
+						{:else}
+							Save terms and conditions
 						{/if}
 					</Button>
 				</div>

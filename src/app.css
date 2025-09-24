@@ -89,8 +89,19 @@ body {
 	@apply px-6 pt-4 pb-5 lg:px-8 lg:py-6;
 }
 
+.info-content p + p,
+.info-content ol + p,
+.info-content p + ol,
+.info-content ul + p,
+.info-content p + ul {
+	@apply mt-[1em];
+}
+
 .info-content ul {
 	@apply list-disc pl-[1.25em];
+}
+.info-content ol {
+	@apply list-decimal pl-[1.25em];
 }
 
 .info-content a {
