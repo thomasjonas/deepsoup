@@ -30,14 +30,14 @@
 	bind:clientHeight={rectSize.height}
 	class:bg-green={page.url.pathname === '/info'}
 >
-	<h1 class="lg:-pl-8 -ml-3.5 min-w-0 flex-1 pr-4">
+	<h1 class="min-w-0 flex-1 pr-4">
 		<div class="w-full overflow-hidden">
 			{#if texts.length > 0}
 				<Marquee play speed={texts.join('').length / 10}>
 					{#each texts as t}
-						<div class="pl-3.5 lg:pl-8">{t}</div>
+						{t}
 						<div
-							class=" top-[0.2em] right-0 -mr-1.5 ml-2 aspect-square h-[0.8em] rounded-full bg-black lg:-mr-6"
+							class="top-[0.2em] right-0 mx-16 aspect-square h-[0.8em] rounded-full bg-black lg:mx-32"
 						></div>
 					{/each}
 				</Marquee>
