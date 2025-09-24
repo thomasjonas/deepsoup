@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import Hls from 'hls.js';
-	import { VolumeMuteOutline, VolumeMuteSolid } from 'flowbite-svelte-icons';
+	import { onMount } from 'svelte';
 	import MuteButton from './MuteButton.svelte';
 
 	let video: HTMLVideoElement;
@@ -27,6 +26,12 @@
 
 <div class="pointer-events-auto relative">
 	<MuteButton {muted} onclick={() => (muted = !muted)} />
-	<video class="pointer-events-none h-auto w-full" bind:this={video} autoplay playsinline muted loop
+	<video
+		class="pointer-events-none aspect-[3200/1800] h-auto w-full"
+		bind:this={video}
+		autoplay
+		playsinline
+		muted
+		loop
 	></video>
 </div>
