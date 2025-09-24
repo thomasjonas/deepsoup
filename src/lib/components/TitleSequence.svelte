@@ -37,7 +37,7 @@
 					{#each texts as t}
 						{t}
 						<div
-							class="top-[0.2em] right-0 mx-16 aspect-square h-[0.8em] rounded-full bg-black lg:mx-32"
+							class="top-[0.2em] right-0 mx-8 aspect-square h-[0.8em] rounded-full bg-black lg:mx-16"
 						></div>
 					{/each}
 				</Marquee>
