@@ -26,7 +26,20 @@
 			video.play();
 		}
 	});
+
+	function unlockVideo() {
+		if (!video) return;
+		video.play();
+	}
 </script>
+
+<svelte:head>
+	{#if isPlaying}
+		<meta name="theme-color" content="#72B286" />
+	{/if}
+</svelte:head>
+
+<svelte:window ontouchstart={unlockVideo} />
 
 <div
 	class="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-1000"
