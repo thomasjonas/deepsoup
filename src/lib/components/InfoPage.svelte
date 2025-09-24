@@ -2,6 +2,7 @@
 	import { topState } from '$lib/state.svelte';
 	import DashedBox from './DashedBox.svelte';
 	import InfoVideo from './InfoVideo.svelte';
+	import LogoLink from './LogoLink.svelte';
 
 	let { content } = $props();
 
@@ -26,5 +27,29 @@
 				{@html block}
 			</DashedBox>
 		{/each}
+
+		<div class="flex flex-wrap items-center justify-center">
+			<LogoLink link="https://filmfonds.nl" image="/logos/ff.png" name="Filmfonds" />
+			<LogoLink
+				link="https://studiobiarritz.nl"
+				image="/logos/studio-biarritz.png"
+				name="Studio Biarritz"
+			/>
+			<LogoLink
+				link="https://stimuleringsfonds.nl"
+				image="/logos/stimuleringsfonds.png"
+				name="Creative Industries Fund NL"
+			/>
+			<LogoLink
+				link="https://www.filmfestival.nl/"
+				image="/logos/nff.png"
+				name="Nederlands Film Festival"
+			/>
+			<LogoLink
+				link="https://festival.idfa.nl/doclab/"
+				image="/logos/idfa-doclab.png"
+				name="IDFA Doclab"
+			/>
+		</div>
 	</div>
 </div>
