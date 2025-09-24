@@ -14,7 +14,7 @@
 			description: string;
 		};
 		onError: (message: string) => void;
-		restart: (message: string) => void;
+		restart: () => void;
 	} = $props();
 
 	let isUploading = $state(false);
@@ -82,7 +82,7 @@
 		<p class="mb-8">Thank you, your contribution has entered Deep Soup!</p>
 		<p>We reach out to you to witness the encounter with a non-human intelligence.</p>
 		<button type="button" class="my-4 underline decoration-2 underline-offset-3" onclick={restart}
-			>Restart</button
+			>OK</button
 		>
 	</div>
 {:else}

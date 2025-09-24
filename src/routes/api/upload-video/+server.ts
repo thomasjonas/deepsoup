@@ -22,11 +22,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		const video = await getVideoInfo(videoId);
 
 		// Validate required fields
-		if (!video || !name || !email) {
+		if (!video) {
 			return json(
 				{
 					success: false,
-					error: 'Missing required fields: video file, name, or email'
+					error: 'Missing required fields: video'
 				},
 				{ status: 400 }
 			);
