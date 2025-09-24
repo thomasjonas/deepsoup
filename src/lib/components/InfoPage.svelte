@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { topState } from '$lib/state.svelte';
 	import DashedBox from './DashedBox.svelte';
+	import InfoVideo from './InfoVideo.svelte';
 
 	let { content } = $props();
 
@@ -19,6 +20,7 @@
 	style="top: {top}px"
 >
 	<div class="info-content body-text mx-auto pt-2 pb-2 leading-snug lg:max-w-[740px] lg:pt-0">
+		<InfoVideo />
 		{#each blocks as block}
 			<DashedBox class="block">
 				{@html block}
