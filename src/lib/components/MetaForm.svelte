@@ -30,13 +30,8 @@
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 
-		if (!video || !formData.name || !formData.email) {
-			onError('Please fill in all required fields and select a video');
-			return;
-		}
-
-		if (!formData.email) {
-			onError('Please enter a valid email address');
+		if (!video) {
+			onError('Please select a video');
 			return;
 		}
 
@@ -131,9 +126,9 @@
 
 		<button
 			type="submit"
-			disabled={isUploading}
+			disabled={isUploading || !formData.termsAndConditions}
 			class="my-4 underline decoration-2 underline-offset-3"
-			class:opacity-50={isUploading}>Submit</button
+			class:opacity-50={isUploading || !formData.termsAndConditions}>Submit</button
 		>
 	</form>
 {/if}
