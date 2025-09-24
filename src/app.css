@@ -135,3 +135,9 @@ div:focus {
 		-webkit-text-stroke: 2px black;
 	}
 }
+
+input:is(:-webkit-autofill, :autofill) {
+	-webkit-box-shadow: 0 0 0px 1000px var(--color-green) inset !important;
+	-webkit-text-fill-color: inherit !important;
+	transition: background-color 9999s ease-in-out 0s !important;
+}
