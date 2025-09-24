@@ -48,6 +48,35 @@
 	<a
 		href={page.url.pathname === '/info' ? '/' : '/info'}
 		class=" pointer-events-auto shrink-0 underline decoration-2 underline-offset-3 lg:decoration-3 lg:underline-offset-4"
-		>{page.url.pathname === '/info' ? 'Close' : 'Info'}</a
 	>
+		{#if page.url.pathname === '/info'}
+			<div class="pt-1.5 lg:pt-2.5">
+				<svg
+					class="aspect-square h-5 w-auto lg:h-8"
+					viewBox="0 0 39 39"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<line
+						x1="1.41421"
+						y1="1.58579"
+						x2="36.7696"
+						y2="36.9411"
+						stroke="black"
+						stroke-width="4"
+					/>
+					<line
+						x1="36.8405"
+						y1="1.41421"
+						x2="1.48514"
+						y2="36.7696"
+						stroke="black"
+						stroke-width="4"
+					/>
+				</svg>
+			</div>
+		{:else}
+			Info
+		{/if}
+	</a>
 </div>
