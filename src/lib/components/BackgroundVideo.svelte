@@ -32,5 +32,6 @@
 	class="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-1000"
 	class:opacity-100={isPlaying}
 >
-	<video class="h-full w-full object-cover" bind:this={video} autoplay playsinline muted></video>
+	<video class="h-full w-full object-cover" bind:this={video} autoplay playsinline muted loop
+	></video>
 </div>

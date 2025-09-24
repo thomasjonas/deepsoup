@@ -27,6 +27,6 @@
 
 <div class="pointer-events-auto relative">
 	<MuteButton {muted} onclick={() => (muted = !muted)} />
-	<video class="pointer-events-none h-auto w-full" bind:this={video} autoplay playsinline muted
+	<video class="pointer-events-none h-auto w-full" bind:this={video} autoplay playsinline muted loop
 	></video>
 </div>
