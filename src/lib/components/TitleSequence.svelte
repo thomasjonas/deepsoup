@@ -28,6 +28,7 @@
 	class="ui-text lg pointer-events-none flex w-screen items-start px-3.5 pt-2.5 pb-3 leading-tight lg:px-4 lg:pt-4 lg:pb-4"
 	bind:clientWidth={rectSize.width}
 	bind:clientHeight={rectSize.height}
+	class:bg-green={page.url.pathname === '/info'}
 >
 	<h1 class="lg:-pl-8 -ml-3.5 min-w-0 flex-1 pr-4">
 		<div class="w-full overflow-hidden">
