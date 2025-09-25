@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as Sentry from '@sentry/sveltekit';
 	import { uploadToBunny } from '$lib/bunny-upload';
 	import { appState } from '$lib/state.svelte';
 	import { onDestroy, tick } from 'svelte';
@@ -99,6 +100,7 @@
 			videoId = vidId;
 		} catch (error: any) {
 			onError(error.toString());
+			Sentry.captureException(error);
 		} finally {
 			isUploading = false;
 			checkSuccess();
@@ -231,6 +233,7 @@
 			await analyzeVideoWithAI();
 		} catch (error) {
 			console.error('Error extracting screenshots:', error);
+			Sentry.captureException(error);
 			onError('Failed to analyze video content');
 		} finally {
 			text = 'Analysing';
@@ -269,6 +272,7 @@
 			}
 		} catch (error) {
 			console.error('Error calling AI analysis:', error);
+			Sentry.captureException(error);
 		}
 	}
 

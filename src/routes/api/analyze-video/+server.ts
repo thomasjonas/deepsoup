@@ -1,9 +1,10 @@
-import { eq } from 'drizzle-orm';
-import { json } from '@sveltejs/kit';
-import { analyzeVideoScreenshots, generateFallbackDescription } from '$lib/server/openai';
-import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import { siteContent } from '$lib/server/db/schema';
+import { analyzeVideoScreenshots, generateFallbackDescription } from '$lib/server/openai';
+import * as Sentry from '@sentry/sveltekit';
+import { json } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
+import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -53,6 +54,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			});
 		}
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error('Error in analyze-video API:', error);
 
 		return json(

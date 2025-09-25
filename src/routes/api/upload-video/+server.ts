@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/sveltekit';
 import { BUNNY_LIBRARY_ID } from '$env/static/private';
 import { getVideoInfo } from '$lib/server/bunny-stream';
 import { db } from '$lib/server/db';
@@ -72,6 +73,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			});
 		} catch (dbError) {
 			console.error('Database error while saving video:', dbError);
+			Sentry.captureException(dbError);
 
 			// Try to clean up BunnyStream video if database insert fails
 			// Note: We could implement deleteVideo call here, but for now just log the issue
@@ -86,6 +88,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 	} catch (error) {
 		console.error('Error in upload-video API:', error);
+		Sentry.captureException(error);
 
 		return json(
 			{

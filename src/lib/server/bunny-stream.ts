@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/sveltekit';
 import { env } from '$env/dynamic/private';
 
 export interface BunnyStreamVideo {
@@ -60,6 +61,7 @@ export async function createVideo(title: string): Promise<CreateVideoResponse> {
 			videoLibraryId: data.videoLibraryId
 		};
 	} catch (error) {
+		Sentry.captureException(error);
 		return {
 			success: false,
 			message: `Error creating video: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -105,6 +107,7 @@ export async function uploadVideo(
 			embedUrl
 		};
 	} catch (error) {
+		Sentry.captureException(error);
 		return {
 			success: false,
 			message: `Error uploading video: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -131,6 +134,7 @@ export async function getVideoInfo(videoId: string): Promise<BunnyStreamVideo | 
 
 		return await response.json();
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error('Error getting video info:', error);
 		return null;
 	}
@@ -154,6 +158,7 @@ export async function listVideos(): Promise<BunnyStreamVideo[]> {
 		return data.items || [];
 	} catch (error) {
 		console.error('Error listing videos:', error);
+		Sentry.captureException(error);
 		return [];
 	}
 }
@@ -170,6 +175,7 @@ export async function getDownloadUrl(videoId: string): Promise<string | null> {
 		return videoInfo.mp4Url || null;
 	} catch (error) {
 		console.error('Error getting download URL:', error);
+		Sentry.captureException(error);
 		return null;
 	}
 }
@@ -190,6 +196,7 @@ export async function deleteVideo(videoId: string): Promise<boolean> {
 		return response.ok;
 	} catch (error) {
 		console.error('Error deleting video:', error);
+		Sentry.captureException(error);
 		return false;
 	}
 }

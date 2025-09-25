@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import * as Sentry from '@sentry/sveltekit';
 import { env } from '$env/dynamic/private';
 
 const openai = new OpenAI({
@@ -71,6 +72,7 @@ export async function analyzeVideoScreenshots(
 		};
 	} catch (error) {
 		console.error('Error analyzing video screenshots:', error);
+		Sentry.captureException(error);
 
 		// Return a user-friendly error message
 		let errorMessage = 'Failed to analyze video content';
