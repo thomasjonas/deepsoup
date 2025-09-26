@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import Hls from 'hls.js';
 
 	let { isPlaying } = $props();
+	let isUnlocked = $state(false);
 
 	let video: HTMLVideoElement;
 
@@ -16,20 +17,29 @@
 		} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
 			video.src = videoSrc;
 		}
-
-		if (isPlaying) video.play();
 	});
 
+	let pauseTimeout: NodeJS.Timeout;
 	$effect(() => {
+		clearTimeout(pauseTimeout);
 		if (isPlaying) {
 			video.currentTime = 0;
 			video.play();
+		} else {
+			pauseTimeout = setTimeout(() => {
+				video.pause();
+			}, 1000);
 		}
 	});
 
-	function unlockVideo() {
-		if (!video) return;
+	async function unlockVideo() {
+		if (!video || isUnlocked) return;
+		isUnlocked = true;
 		video.play();
+		if (!isPlaying) {
+			await tick();
+			video.pause();
+		}
 	}
 </script>
 
@@ -45,6 +55,5 @@
 	class="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-1000"
 	class:opacity-100={isPlaying}
 >
-	<video class="h-full w-full object-cover" bind:this={video} autoplay playsinline muted loop
-	></video>
+	<video class="h-full w-full object-cover" bind:this={video} playsinline muted loop></video>
 </div>
