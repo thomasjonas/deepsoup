@@ -75,7 +75,13 @@
 {#if uploadSuccess}
 	<div class="pointer-events-auto text-left">
 		<p class="mb-8">Thank you, your contribution has entered Deep Soup!</p>
-		<p>We reach out to you to witness the encounter with a non-human intelligence.</p>
+		<p>
+			If you shared your contact, we’ll soon invite you to witness an encounter with a non-human
+			intelligence. Everyone else: make sure to keep a close eye on IG <a
+				href="https://www.instagram.com/deepsoup.io"
+				target="_blank">deepsoup.io</a
+			>
+		</p>
 		<button type="button" class="my-4 underline decoration-2 underline-offset-3" onclick={restart}
 			>OK</button
 		>
