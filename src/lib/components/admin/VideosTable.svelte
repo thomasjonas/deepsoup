@@ -6,7 +6,6 @@
 	import type { ColumnDef, Row } from '@tanstack/table-core';
 	import dayjs from 'dayjs';
 	import { Card } from 'flowbite-svelte';
-	import type { DataTable } from 'simple-datatables';
 	import { createRawSnippet } from 'svelte';
 	import { headerComponent, renderComponent, renderSnippet } from './data-table/render-helpers';
 	import TableActions from './data-table/table-actions.svelte';

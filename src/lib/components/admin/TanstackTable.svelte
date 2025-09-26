@@ -2,14 +2,12 @@
 	import {
 		type ColumnDef,
 		type ColumnFiltersState,
-		type PaginationState,
 		type Row,
 		type RowSelectionState,
 		type SortingState,
 		type VisibilityState,
 		getCoreRowModel,
 		getFilteredRowModel,
-		getPaginationRowModel,
 		getSortedRowModel
 	} from '@tanstack/table-core';
 
@@ -30,7 +28,6 @@
 		onRowClick
 	}: { data: any[]; columns: ColumnDef<any>[]; onRowClick: (row: Row<any>) => void } = $props();
 
-	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
 	let rowSelection = $state<RowSelectionState>({});
@@ -42,9 +39,6 @@
 		},
 		columns,
 		state: {
-			get pagination() {
-				return pagination;
-			},
 			get sorting() {
 				return sorting;
 			},
@@ -59,16 +53,8 @@
 			}
 		},
 		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
-		// onPaginationChange: (updater) => {
-		// 	if (typeof updater === 'function') {
-		// 		pagination = updater(pagination);
-		// 	} else {
-		// 		pagination = updater;
-		// 	}
-		// },
 		onSortingChange: (updater: any) => {
 			if (typeof updater === 'function') {
 				sorting = updater(sorting);
