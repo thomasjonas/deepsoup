@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { RectangleLayout } from '$lib/rectangle-layout.svelte';
 	import { appContent, topState } from '$lib/state.svelte';
+	import { onMount } from 'svelte';
 	import Marquee from 'svelte-fast-marquee';
 
 	let texts = $derived(appContent.topbar ? appContent.topbar.split('\n') : []);
@@ -22,6 +23,13 @@
 			h: height
 		});
 	});
+
+	let headingEl: HTMLHeadingElement;
+
+	let offset = $state('100vw');
+	onMount(() => {
+		offset = `${headingEl.getBoundingClientRect().width}px`;
+	});
 </script>
 
 <div
@@ -30,10 +38,11 @@
 	bind:clientHeight={rectSize.height}
 	class:bg-green={page.url.pathname === '/info'}
 >
-	<h1 class="min-w-0 flex-1 pr-4">
+	<h1 class="min-w-0 flex-1 pr-4" bind:this={headingEl}>
 		<div class="w-full overflow-hidden">
 			{#if texts.length > 0}
-				<Marquee play speed={texts.join('').length / 10}>
+				<Marquee play speed={texts.join('').length / 6}>
+					<div style="width: {offset}"></div>
 					{#each texts as t}
 						{t}
 						<div
