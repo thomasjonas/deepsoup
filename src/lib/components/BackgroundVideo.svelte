@@ -35,11 +35,8 @@
 	async function unlockVideo() {
 		if (!video || isUnlocked) return;
 		isUnlocked = true;
-		video.play();
-		if (!isPlaying) {
-			await tick();
-			video.pause();
-		}
+		await video.play();
+		if (!isPlaying) video.pause();
 	}
 </script>
 
