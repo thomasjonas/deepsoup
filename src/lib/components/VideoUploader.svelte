@@ -222,8 +222,12 @@
 						ctx.drawImage(videoPreview, 0, 0, width, height);
 
 						// Convert to base64 image
-						const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-						screenshots = [...screenshots, dataUrl];
+						let dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+						if (dataUrl === 'data:,') {
+							console.warn('Empty image generated');
+						} else {
+							screenshots = [...screenshots, dataUrl];
+						}
 						resolve();
 					};
 				});
