@@ -205,7 +205,7 @@
 						let height = videoPreview.videoHeight;
 
 						// Max size
-						const MAX_SIZE = 2048;
+						const MAX_SIZE = 1024;
 
 						// Scale down if necessary
 						if (width > MAX_SIZE || height > MAX_SIZE) {
@@ -277,6 +277,7 @@
 		} catch (error) {
 			console.error('Error calling AI analysis:', error);
 			Sentry.captureException(error);
+			onDescription('DESCRIPTION_ERROR');
 		}
 	}
 
