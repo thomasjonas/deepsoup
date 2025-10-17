@@ -18,7 +18,8 @@ Sentry.init({
 	replaysOnErrorSampleRate: 1.0,
 
 	// If you don't want to use Session Replay, just remove the line below:
-	integrations: [replayIntegration()]
+	integrations: [replayIntegration()],
+	ignoreErrors: ['Non-Error promise rejection captured with value: Object Not Found Matching Id:']
 });
 
 // If you have a custom error handler, pass it to `handleErrorWithSentry`

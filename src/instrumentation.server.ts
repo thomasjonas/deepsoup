@@ -6,8 +6,9 @@ Sentry.init({
 	enabled: !dev,
 
 	// Enable logs to be sent to Sentry
-	enableLogs: true
+	enableLogs: true,
 
 	// uncomment the line below to enable Spotlight (https://spotlightjs.com)
 	// spotlight: import.meta.env.DEV,
+	ignoreErrors: ['Non-Error promise rejection captured with value: Object Not Found Matching Id:']
 });
