@@ -201,34 +201,36 @@
 				await new Promise<void>((resolve) => {
 					videoPreview.currentTime = timestamp;
 					videoPreview.onseeked = () => {
-						let width = videoPreview.videoWidth;
-						let height = videoPreview.videoHeight;
+						setTimeout(() => {
+							let width = videoPreview.videoWidth;
+							let height = videoPreview.videoHeight;
 
-						// Max size
-						const MAX_SIZE = 1024;
+							// Max size
+							const MAX_SIZE = 1024;
 
-						// Scale down if necessary
-						if (width > MAX_SIZE || height > MAX_SIZE) {
-							const scale = Math.min(MAX_SIZE / width, MAX_SIZE / height);
-							width = Math.floor(width * scale);
-							height = Math.floor(height * scale);
-						}
+							// Scale down if necessary
+							if (width > MAX_SIZE || height > MAX_SIZE) {
+								const scale = Math.min(MAX_SIZE / width, MAX_SIZE / height);
+								width = Math.floor(width * scale);
+								height = Math.floor(height * scale);
+							}
 
-						// Set canvas size
-						canvas.width = width;
-						canvas.height = height;
+							// Set canvas size
+							canvas.width = width;
+							canvas.height = height;
 
-						// Draw video frame to canvas with scaling
-						ctx.drawImage(videoPreview, 0, 0, width, height);
+							// Draw video frame to canvas with scaling
+							ctx.drawImage(videoPreview, 0, 0, width, height);
 
-						// Convert to base64 image
-						let dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-						if (dataUrl === 'data:,') {
-							console.warn('Empty image generated');
-						} else {
-							screenshots = [...screenshots, dataUrl];
-						}
-						resolve();
+							// Convert to base64 image
+							let dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+							if (dataUrl === 'data:,') {
+								console.warn('Empty image generated');
+							} else {
+								screenshots = [...screenshots, dataUrl];
+							}
+							resolve();
+						}, 100);
 					};
 				});
 			}
@@ -311,7 +313,14 @@
 	tabindex="0"
 >
 	{#if selectedFile}
-		<video bind:this={videoPreview} class="hidden" playsinline controls muted></video>
+		<video
+			bind:this={videoPreview}
+			crossorigin="anonymous"
+			class="hidden"
+			playsinline
+			controls
+			muted
+		></video>
 		{text}
 	{:else}
 		<button type="button" onclick={() => fileInput.click()} class="">
